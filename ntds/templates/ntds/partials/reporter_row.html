@@ -1,0 +1,13 @@
+{% extends 'generic/partials/partial_row.html' %}
+{% block remaining_row_content %}
+
+    <td>{{ object.name }}</td>
+    <td>{{ object.location  }}</td>
+    <td>{{ object.subcounty  }}</td>
+    <td>{{ object.district }}</td>
+    <td>{{ object.connections.all.0  }}</td>
+    <td>{{ object.status  }}</td>
+    <td><a href="">Submissions</a></td>
+
+
+{% endblock %}

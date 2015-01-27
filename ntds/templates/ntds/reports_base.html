@@ -1,0 +1,170 @@
+{% extends "generic/base.html" %}
+{% block title %}
+    Reports - {{ block.super }}
+{% endblock %}
+{% block stylesheets %}
+
+    <link href="http://fonts.googleapis.com/ntds/stylesheets?family=Lato:100,300,400,700" media="all" rel="stylesheet"
+          type="text/css"/>
+    <link href="/static/ntds/stylesheets/bootstrap.min.css" media="all" rel="stylesheet" type="text/ntds/stylesheets"/>
+    <link href="/static/ntds/stylesheets/font-awesome.css" media="all" rel="stylesheet" type="text/ntds/stylesheets"/>
+    <link href="/static/ntds/stylesheets/afro-font.css" media="all" rel="stylesheet" type="text/ntds/stylesheets"/>
+    <link href="/static/ntds/stylesheets/style.css" media="all" rel="stylesheet" type="text/ntds/stylesheets"/>
+    <link href="/static/ntds/stylesheets/afro.css" media="all" rel="alternate stylesheet" title="gray-theme" type="text/ntds/stylesheets"/>
+    <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}mtrack/stylesheets/layout.css" />
+    <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}rapidsms/stylesheets/splits.css" />
+    <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}rapidsms/stylesheets/modules.css" />
+    <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}rapidsms/stylesheets/tables.css" />
+    <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}rapidsms/stylesheets/forms.css" />
+    <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}rapidsms/stylesheets/icons.css" />
+    <link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}generic/stylesheets/generic.css"/>
+
+{% endblock %}
+{% block javascripts %}
+    <script src="{{ MEDIA_URL }}ntds/javascripts/jquery-1.8.2.js"></script>
+    <script src="/static/ntds/javascripts/bootstrap.min.js?12"></script>
+    <script src="/static/ntds/javascripts/generic.js?125"></script>
+
+
+{% endblock %}
+
+
+
+
+{% block header %}
+    {{ block.super }}
+    <div >
+
+        <div  class="stats-container" style="height:40px;min-height: 40px; margin-top:20px;">
+            <div class="col-md-7">
+
+
+                <h2 class="number" style="padding-top:0px;font-size:36px;text-align: left;">Manage Reporters</h2>
+
+
+            </div>
+            <div class="col-md-5">
+                <a class="btn btn-primary" href="/ntds/disease_report/">
+                    Disease Reports
+                </a>
+
+                <a class="btn btn-primary" href="/ntds/contacts/new/">
+                    Add Reporter
+                </a>
+                <a class="btn btn-primary" href="/ntds/dashboard">
+                    &larr;Back
+                </a>
+
+
+            </div>
+        </div>
+
+
+
+    </div>
+
+{% endblock %}
+
+{% block filters %}
+
+    {% if filter_forms|length > 0 %}
+        <div class="row ">
+        <h2>Filter By:</h2>
+        <div id="filters" class="module  col-md-10 inline form-horizontal fluid-height widget-container">
+
+
+
+
+            {% for form in filter_forms %}
+                <div class="control-group col-md-4">
+
+                    {% for field in form.visible_fields %}
+
+                        {% if forloop.first %}
+                            {% for hidden in form.hidden_fields %}
+                                {{ hidden }}
+                            {% endfor %}
+                        {% endif %}
+
+
+                        <div class="">
+                            <span class="help-block">{{ field.help_text  }}</span>
+                            {{ field }}
+
+
+                        </div>
+
+
+
+
+                    {% endfor %}
+
+
+                </div>
+
+            {% endfor %}
+
+
+        </div>
+        <div class="row  clearfix">
+
+
+            <div class=" col-md-4" style="margin-top:80px;">
+
+
+                <a href="javascript:void(0)" onclick="filter(this)" class="btn btn-primary">Update</a>
+
+
+                <a href="./" class="btn btn-primary">Clear</a>
+
+
+
+
+            </div>
+        </div>
+    {% endif %}
+
+{% endblock %}
+
+{% block action_forms %}
+    <div class="row ">
+        <div style="margin-top:10px;">
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#download" data-toggle="tab">Export To Excel</a></li>
+                <li ><a href="#send_sms" data-toggle="tab">Send SMS </a></li>
+
+            </ul>
+        </div>
+
+        <div class="tab-content">
+            <div class="tab-pane active" id="download">
+                <table style="margin-top:20px;">
+                    {{action_forms.0.1.as_table}}
+                    <input type="text" name ="download">
+
+                    <tr><td><a id ="send_btn"  class="{{ action_forms.0.1.action_class }} download btn-primary btn" href="javascript:void(0)" onClick="$(this).parents('form').submit()">Export Selected to Excel </a></td></tr>
+                </table>
+            </div>
+
+
+            <div class="tab-pane" id="send_sms">
+                <table style="margin-top:20px;">
+                    {{action_forms.1.1.as_table}}
+                    <tr><td><a id="sms_btn" class="{{ action_forms.1.1.action_class }} btn-primary btn " href="javascript:void(0)" onClick="actionx('#sms_btn', '{{ action_forms.1.0 }}',{{ page }});">Send SMS</a></td></tr>
+                </table>
+            </div>
+
+
+
+
+
+
+        </div>
+    </div>
+
+
+
+
+{% endblock %}
+
+

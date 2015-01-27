@@ -1,0 +1,80 @@
+@font-face {
+  font-family: 'afro';
+ 
+  src:url('../font/afro.eot') format('embedded-opentype'),
+    url('../font/afro.woff') format('woff'),
+    url('../font/afro.ttf') format('truetype'),
+    url('../font/afro.svg') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Use the following CSS code if you want to use data attributes for inserting your icons */
+[data-icon]:before {
+  font-family: 'afro';
+  content: attr(data-icon);
+  speak: none;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Use the following CSS code if you want to have a class per icon */
+/*
+Instead of a list of all class selectors,
+you can use the generic selector below, but it's slower:
+[class*="afro-"] {
+*/
+.afro-home, .afro-feed, .afro-star, .afro-forms, .afro-tables, .afro-charts, .afro-pages, .afro-gallery, .afro-flag, .afro-envelope, .afro-gear {
+  font-family: 'afro';
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+}
+.afro-home:before {
+  content: "\e006";
+}
+.afro-feed:before {
+  content: "\e002";
+}
+.afro-star:before {
+  content: "\e003";
+}
+.afro-forms:before {
+  content: "\e004";
+}
+.afro-tables:before {
+  content: "\e00a";
+}
+.afro-charts:before {
+  content: "\e007";
+}
+.afro-pages:before {
+  content: "\e008";
+}
+.afro-gallery:before {
+  content: "\e009";
+}
+.afro-flag:before {
+  content: "\e000";
+}
+.afro-envelope:before {
+  content: "\e005";
+}
+.afro-gear:before {
+  content: "\e001";
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+  font-family: 'afro';
+  src: url('../font/afro.svg') format('svg');
+  }
+}

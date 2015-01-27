@@ -1,0 +1,91 @@
+{% extends "layout.html" %}
+
+{% block stylesheets %}
+    {{ block.super }}
+
+    <style type="text/css">
+
+
+        .data-block {
+            position: relative;
+            margin-bottom: 20px;
+            background: #ccc;
+            -webkit-border-radius: 6px;
+            -moz-border-radius: 6px;
+            border-radius: 6px;
+        }
+        .data-block section {
+            padding: 20px;
+        }
+        .bannerx {
+            width:200px;
+            height:70px;
+            display:inline-block;
+            font-size: 16px;
+        }
+
+
+    </style>
+
+    <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}ntds/stylesheets/jquery-jvectormap.css" />
+
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ MEDIA_URL }}ntds/javascripts/jquery-1.8.2.js"></script>
+
+    <script src="{{ MEDIA_URL }}ntds/javascripts/jquery-jvectormap-2.0.1.min.js"></script>
+    <script src="{{ MEDIA_URL }}ntds/javascripts/jquery-jvectormap-world-mill-en.js"></script>
+    <script src=" http://jvectormap.com/js/jquery-jvectormap-europe-mill-en.js"></script>
+    <script src="{{ MEDIA_URL }}ntds/javascripts/districts.js"></script>
+    <script src="{{ MEDIA_URL }}ntds/javascripts/subcounties.js"></script>
+    <script src="{{ MEDIA_URL }}ntds/javascripts/parishes.js"></script>
+
+    <script>
+
+
+        $(function(){
+            new jvm.MultiMap({
+                container: $('#world-map'),
+                maxLevel: 1,
+                main: {
+                    map: 'parishes_mill_en'
+                },
+                mapNameByCode: function(code, multiMap){
+
+                    return 'subcounties_mill_en';
+                }
+            });
+        });
+    </script>
+
+{% endblock %}
+
+{% block tabs %}
+
+
+{% endblock %}
+
+{% block page_tabs %}
+    <ul style="left:0;" id="tabs">
+        <li class="active">
+            <a href="{% url ndts-dashboard %}"><span>NTDs</span></a>
+        </li>
+        {% for tab in tabs %}
+            <li class="app-{{ tab.name }}{% if tab.is_active %} active{% endif %}">
+                <a href="{{ tab.url }}"><span>{{ tab.caption }}</span></a>
+            </li>{% endfor %}
+    </ul>
+{% endblock %}
+{% block content %}
+    <h1>Neglected Tropical Disease Mass Drug Administration  </h1>
+    <br>
+    <h2>Upload Reporters</h2>
+    <div >
+
+        <form action="/ntds/reporter">
+
+
+    </form>
+
+{% endblock %}

@@ -1,0 +1,161 @@
+{% extends "layout.html" %}
+
+{% block stylesheets %}
+{{ block.super }}
+
+<style type="text/css">
+
+
+    .data-block {
+        position: relative;
+        margin-bottom: 20px;
+        background: #ccc;
+        -webkit-border-radius: 6px;
+        -moz-border-radius: 6px;
+        border-radius: 6px;
+    }
+    .data-block section {
+        padding: 20px;
+    }
+    .bannerx {
+        width:200px;
+        height:70px;
+        display:inline-block;
+        font-size: 16px;
+    }
+
+
+</style>
+
+    <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}ntds/stylesheets/jquery-jvectormap.css" />
+
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ MEDIA_URL }}ntds/javascripts/jquery-1.8.2.js"></script>
+
+    <script src="{{ MEDIA_URL }}ntds/javascripts/jquery-jvectormap-2.0.1.min.js"></script>
+    <script src="{{ MEDIA_URL }}ntds/javascripts/jquery-jvectormap-world-mill-en.js"></script>
+    <script src=" http://jvectormap.com/js/jquery-jvectormap-europe-mill-en.js"></script>
+    <script src="{{ MEDIA_URL }}ntds/javascripts/districts.js"></script>
+    <script src="{{ MEDIA_URL }}ntds/javascripts/subcounties.js"></script>
+    <script src="{{ MEDIA_URL }}ntds/javascripts/parishes.js"></script>
+
+    <script>
+    var gdata={{ pdata }};
+    var ldata={{ ldata }};
+
+
+        $(function(){
+            $("#world-map").vectorMap({
+
+                backgroundColor: '#8f1417',
+                map: 'districts_mill_en',
+                series: {
+                regions: [{
+                    values: gdata,
+                    scale: ['#C8EEFF', '#0071A4'],
+                    normalizeFunction: 'polynomial'
+                }]},
+                regionStyle: {
+                    initial: {
+                        fill: 'white',
+                        "fill-opacity": 1,
+                        stroke: 'none',
+                        "stroke-width": 0,
+                        "stroke-opacity": 1
+                    },
+                    hover: {
+                        "fill-opacity": 0.8
+                    }
+                },
+                markerStyle: {
+                    initial: {
+                        r: 8
+                    },
+                    hover: {
+                        r: 12,
+                        stroke: 'rgba(29,210,175,0.3)',
+                        "stroke-width": 6
+                    }
+                },
+                onRegionTipShow: function(e, el, code){
+                    if (!ldata[code]) {
+
+
+                    }
+                    else
+                    {
+                    el.html(el.html()+' Treated '+gdata[code]+' '+ldata[code]+' Patients');
+
+                }
+
+
+            }
+        });});
+    </script>
+
+{% endblock %}
+
+{% block tabs %}
+
+
+{% endblock %}
+
+{% block page_tabs %}
+    <ul style="left:0;" id="tabs">
+        <li class="active">
+            <a href="{% url ndts-dashboard %}"><span>NTDs</span></a>
+        </li>
+        {% for tab in tabs %}
+            <li class="app-{{ tab.name }}{% if tab.is_active %} active{% endif %}">
+                <a href="{{ tab.url }}"><span>{{ tab.caption }}</span></a>
+            </li>{% endfor %}
+    </ul>
+{% endblock %}
+{% block content %}
+<h1>Neglected Tropical Disease Mass Drug Administration  </h1>
+    <br>
+    <div >
+
+    <a href="/ntds/reporters/">
+    <div  class="bannerx data-block widget-block">
+        <section>
+            <span></span>
+            <strong class="widget-label">Manage Reporters</strong>
+        </section>
+    </div>
+    </a>
+
+    <a href="/ntds/reports/">
+        <div  class="bannerx data-block widget-block">
+            <section>
+                <span></span>
+                <strong class="widget-label">Reports</strong>
+            </section>
+        </div>
+    </a>
+
+    <a href="/ntds/analytics/">
+        <div  class="bannerx data-block widget-block">
+            <section>
+                <span></span>
+                <strong class="widget-label">Analytics</strong>
+            </section>
+        </div>
+    </a>
+
+    <a href="/ntds/submissions/">
+        <div  class="bannerx data-block widget-block">
+            <section>
+                <span></span>
+                <strong class="widget-label">Submissions</strong>
+            </section>
+        </div>
+    </a>
+    </div>
+
+<h2>Disease Prevalence By District</h2>
+    <div id="world-map" style="width: 600px; height: 400px"></div>
+
+{% endblock %}

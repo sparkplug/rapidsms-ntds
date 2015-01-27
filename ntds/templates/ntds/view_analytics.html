@@ -1,0 +1,324 @@
+{% extends "layout.html" %}
+
+{% block stylesheets %}
+    {{ block.super }}
+
+    <link href="http://fonts.googleapis.com/css?family=Lato:100,300,400,700" media="all" rel="stylesheet"
+          type="text/css"/>
+    <link href="/static/ntds/stylesheets/bootstrap.min.css" media="all" rel="stylesheet" type="text/ntds/stylesheets"/>
+    <link href="/static/ntds/stylesheets/font-awesome.css" media="all" rel="stylesheet" type="text/ntds/stylesheets"/>
+    <link href="/static/ntds/stylesheets/afro-font.css" media="all" rel="stylesheet" type="text/ntds/stylesheets"/>
+
+    <link href="/static/ntds/stylesheets/afro.css" media="all" rel="alternate stylesheet" title="gray-theme" type="text/css"/>
+
+    <style type="text/css">
+
+
+        .data-block {
+            position: relative;
+            margin-bottom: 20px;
+            margin:20px;
+            -webkit-border-radius: 6px;
+            -moz-border-radius: 6px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+        .data-block section {
+            padding: 20px;
+        }
+        .bannerx {
+            width:200px;
+            height:70px;
+            display:inline-block;
+            font-size: 16px;
+        }
+
+
+    </style>
+
+    <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}ntds/stylesheets/jquery-jvectormap.css" />
+
+{% endblock %}
+
+{% block javascripts %}
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="http://code.highcharts.com/highcharts.js"></script>
+
+
+{% endblock %}
+
+{% block tabs %}
+
+
+{% endblock %}
+
+{% block page_tabs %}
+    <ul style="left:0;" id="tabs">
+        <li class="active">
+            <a href="{% url ndts-dashboard %}"><span>NTDs</span></a>
+        </li>
+        {% for tab in tabs %}
+            <li class="app-{{ tab.name }}{% if tab.is_active %} active{% endif %}">
+                <a href="{{ tab.url }}"><span>{{ tab.caption }}</span></a>
+            </li>{% endfor %}
+    </ul>
+{% endblock %}
+{% block content %}
+
+    <div  class="stats-container" style="height:40px;min-height: 40px; margin-top:20px;">
+        <div class="col-md-7">
+
+
+            <h2 class="number" style="padding-top:0px;font-size:36px;text-align: left;">Analytics</h2>
+
+
+        </div>
+        <div class="col-md-5">
+
+            <a class="btn btn-primary" href="/ntds/dashboard">
+                &larr;Back
+            </a>
+
+
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+    <div >
+
+        <row>
+
+            <div class="stats-container   widget-container col-md-5 data-block plan-block">
+                <section>
+                    <h3 style="margin-bottom: 20px;">Drugs Used</h3>
+                    <div id="drugs">
+                    </div>
+                </section>
+            </div>
+
+
+            <div class="stats-container   widget-container col-md-5 data-block plan-block">
+                <section>
+                    <h3 style="margin-bottom: 20px;">Diseases Treated</h3>
+                    <div id="diseases">
+                    </div>
+                </section>
+            </div>
+
+
+
+        </row>
+
+
+
+
+
+        <!-- Data block -->
+        <div class="stats-container    widget-container col-md-10 data-block plan-block">
+            <section>
+                <h3 style="margin-bottom: 20px;">Diseases Treated By District</h3>
+                <div id="disease_by_district">
+                </div>
+            </section>
+        </div>
+
+
+        <div class="stats-container    widget-container col-md-10 data-block plan-block">
+            <section>
+                <h3 style="margin-bottom: 20px;">Drugs  Administered By District</h3>
+                <div id="drug_by_district">
+                </div>
+            </section>
+        </div>
+
+
+        <!-- /Data block -->
+        <!-- Data block -->
+
+
+
+    </div>
+
+    </section>
+
+    <script>
+
+        $(document).ready(function () {
+
+            // Build the chart
+            $('#diseases').highcharts({
+                chart: {
+                    plotBackgroundColor: null,
+                    plotBorderWidth: null,
+                    plotShadow: false
+                },
+                title: {
+                    text: 'Disease Stats'
+                },
+                tooltip: {
+                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: false
+                        },
+                        showInLegend: true
+                    }
+                },
+
+
+
+                series: [{
+                    type: 'pie',
+                    name: 'Diseases',
+                    data: [
+                        ['Lympatic', 45.0],
+                        ['filariasis', 26.8],
+                        {
+                            name: 'onchocerciasis',
+                            y: 12.8,
+                            sliced: true,
+                            selected: true
+                        },
+                        ['chistosomiasis', 8.5],
+                        ['trachoma', 6.2],
+                        ['helminthiasis', 0.7]
+                    ]
+                }]
+            });
+
+            $('#drugs').highcharts({
+                chart: {
+                    plotBackgroundColor: null,
+                    plotBorderWidth: null,
+                    plotShadow: false
+                },
+                title: {
+                    text: 'Drugs Usage'
+                },
+                tooltip: {
+                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: false
+                        },
+                        showInLegend: true
+                    }
+                },
+                series: [{
+                    type: 'pie',
+                    name: 'Browser share',
+                    data: [
+                        ['Firefox', 45.0],
+                        ['IE', 26.8],
+                        {
+                            name: 'Chrome',
+                            y: 12.8,
+                            sliced: true,
+                            selected: true
+                        },
+                        ['Safari', 8.5],
+                        ['Opera', 6.2],
+                        ['Others', 0.7]
+                    ]
+                }]
+            });
+
+
+            $('#drug_by_district').highcharts({
+                chart: {
+                    type: 'column'
+                },
+                title: {
+                    text: ''
+                },
+                xAxis: {
+                    categories: ['Apples', 'Oranges', 'Pears', 'Grapes', 'Bananas']
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: ''
+                    }
+                },
+                tooltip: {
+                    pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.percentage:.0f}%)<br/>',
+                    shared: true
+                },
+                plotOptions: {
+                    column: {
+                        stacking: 'percent'
+                    }
+                },
+                series: [{
+                    name: 'John',
+                    data: [5, 3, 4, 7, 2]
+                }, {
+                    name: 'Jane',
+                    data: [2, 2, 3, 2, 1]
+                }, {
+                    name: 'Joe',
+                    data: [3, 4, 4, 2, 5]
+                }]
+            });
+
+
+            $('#disease_by_district').highcharts({
+                chart: {
+                    type: 'column'
+                },
+                title: {
+                    text: ''
+                },
+                xAxis: {
+                    categories: ['Gulu', 'Moroto', 'Kotido', 'Abim', 'Mbarara']
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: ''
+                    }
+                },
+                tooltip: {
+                    pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.percentage:.0f}%)<br/>',
+                    shared: true
+                },
+                plotOptions: {
+                    column: {
+                        stacking: 'percent'
+                    }
+                },
+                series: [{
+                    name: 'John',
+                    data: [5, 3, 4, 7, 2]
+                }, {
+                    name: 'Jane',
+                    data: [2, 2, 3, 2, 1]
+                }, {
+                    name: 'Joe',
+                    data: [3, 4, 4, 2, 5]
+                }]
+            });
+
+        });
+
+
+
+    </script>
+
+
+
+{% endblock %}
