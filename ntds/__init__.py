@@ -1,4 +1,1 @@
-try:
-    import receivers
-except:
-    pass
+import receivers

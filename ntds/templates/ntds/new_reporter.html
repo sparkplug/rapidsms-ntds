@@ -1,0 +1,158 @@
+{% extends "layout.html" %}
+{% block stylesheets %}
+{{ block.super }}
+
+<link href="http://fonts.googleapis.com/css?family=Lato:100,300,400,700" media="all" rel="stylesheet"
+      type="text/css"/>
+<link href="/static/ntds/stylesheets/bootstrap.min.css" media="all" rel="stylesheet" type="text/css"/>
+<link href="/static/ntds/stylesheets/font-awesome.css" media="all" rel="stylesheet" type="text/css"/>
+<link href="/static/ntds/stylesheets/afro-font.css" media="all" rel="stylesheet" type="text/css"/>
+
+<link href="/static/ntds/stylesheets/afro.css" media="all" rel="alternate stylesheet" title="gray-theme" type="text/css"/>
+
+<style type="text/css">
+
+
+    .data-block {
+        position: relative;
+        margin-bottom: 20px;
+        margin:20px;
+        -webkit-border-radius: 6px;
+        -moz-border-radius: 6px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+    }
+    .data-block section {
+        padding: 20px;
+    }
+    .bannerx {
+        width:200px;
+        height:70px;
+        display:inline-block;
+        font-size: 16px;
+    }
+
+
+</style>
+
+    {% block javascripts %}
+        {{ block.super }}
+
+
+        <script>
+            $(document).ready(function () {
+
+                var $districts =$('#id_district');
+                var $parishes =$('#id_parish');
+                var $subcounties =$('#id_subcounty');
+
+
+
+
+                $districts.change(function () {
+
+                    $parishes.empty();
+                    $subcounties.empty();
+
+
+
+                    $.getJSON('/ntds/get_subcounties/', {'districts': $(this).val()}, function (subcounties) {
+
+                        for (i in subcounties) {
+                            $subcounties.append('<option value="' + subcounties[i][0] + '">' + subcounties[i][1] + '</option>');
+                        }
+
+                    });
+                    $.getJSON('/ntds/get_parishes/', {'subcounties': $(this).val()}, function (parishes) {
+
+                        for (i in parishes) {
+                            $parishes.append('<option value="' + parishes[i][0] + '">' + parishes[i][1] + '</option>');
+                        }
+                    });
+                }).trigger('change');
+
+
+                $subcounties.change(function () {
+
+                    $parishes.empty();
+
+
+
+
+                    $.getJSON('/ntds/get_parishes/', {'subcounties': $(this).val()}, function (parishes) {
+
+                        for (i in parishes) {
+                            $parishes.append('<option value="' + parishes[i][0] + '">' + parishes[i][1] + '</option>');
+                        }
+                    });
+                }).trigger('change');
+
+
+
+
+
+
+            });
+        </script>
+
+
+    {% endblock %}
+
+{% endblock %}
+
+
+{% block content %}
+    <h3>Create Reporter</h3>
+
+    <form id="reporter_form" method="post"  role="form">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="description">Name</label>
+            {{ form.name }}
+        </div>
+
+        <div class="form-group">
+        <label for="mobile">Mobile</label>
+            {{ form.mobile }}
+        </div>
+        <div class="form-group">
+            <label for="district">District</label>
+            {{ form.district }}
+        </div>
+
+        <div class="form-group">
+
+        <label for="description">Subcounty</label>
+            {{ form.subcounty }}
+        </div>
+
+        <div class="form-group">
+
+        <label for="description">Parish</label>
+            {{ form.parish }}
+        </div>
+        <div class="form-group">
+
+
+        <input class="btn btn-primary btn-default-outline " type="submit" value="Create reporter"/>
+            </div>
+    </form>
+
+
+{% endblock %}
+
+
+{% comment %}
+<div class="form-group">
+    <label for="title">Name</label><input
+        class="form-control" id="title"
+        name="title"
+        type="text">
+</div>
+<div class="form-group">
+    <label for="description">Description</label><input
+        class="form-control" name="description" id="description"
+        placeholder="enter short description"
+        type="text">
+</div>{% endcomment %}

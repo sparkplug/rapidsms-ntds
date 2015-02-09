@@ -16,7 +16,7 @@ from django.conf import settings
 from rapidsms_httprouter.router import get_router
 from script.models import ScriptProgress,ScriptSession,Script
 from ntds.models import gettext_db,OptinWord
-from .utils import handle_progress
+from ntds.utils import handle_progress
 from healthmodels.models import HealthProvider
 from .models import Reporter
 
@@ -78,5 +78,8 @@ class App(AppBase):
             elif ScriptProgress.objects.filter(connection=message.connection, script__enabled=True).exists():
                 self.progress(message)
                 return True
+
+        return False
+
 
 

@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+
+{% block stylesheets %}
+    {{ block.super }}
+
+    <link href="http://fonts.googleapis.com/css?family=Lato:100,300,400,700" media="all" rel="stylesheet"
+          type="text/css"/>
+    <link href="/static/ntds/stylesheets/bootstrap.min.css" media="all" rel="stylesheet" type="text/css"/>
+    <link href="/static/ntds/stylesheets/font-awesome.css" media="all" rel="stylesheet" type="text/css"/>
+    <link href="/static/ntds/stylesheets/afro-font.css" media="all" rel="stylesheet" type="text/css"/>
+
+    <link href="/static/ntds/stylesheets/afro.css" media="all" rel="alternate stylesheet" title="gray-theme" type="text/css"/>
+
+    <style type="text/css">
+
+
+        .data-block {
+            position: relative;
+            margin-bottom: 20px;
+            margin:20px;
+            -webkit-border-radius: 6px;
+            -moz-border-radius: 6px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+        .data-block section {
+            padding: 20px;
+        }
+        .bannerx {
+            width:200px;
+            height:70px;
+            display:inline-block;
+            font-size: 16px;
+        }
+
+
+    </style>
+
+
+{% endblock %}
+
+{% block content %}
+    <h3>Upload  Reporters</h3>
+
+    <form id="reporter_form" method="post"  role="form">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="file">Select file</label>
+            {{ form.excel_file }}
+        </div>
+
+        <input class="btn btn-primary btn-default-outline " type="submit" value="Upload"/>
+    </form>
+
+
+{% endblock %}

@@ -6,11 +6,11 @@
 
     <link href="http://fonts.googleapis.com/ntds/stylesheets?family=Lato:100,300,400,700" media="all" rel="stylesheet"
           type="text/css"/>
-    <link href="/static/ntds/stylesheets/bootstrap.min.css" media="all" rel="stylesheet" type="text/ntds/stylesheets"/>
-    <link href="/static/ntds/stylesheets/font-awesome.css" media="all" rel="stylesheet" type="text/ntds/stylesheets"/>
-    <link href="/static/ntds/stylesheets/afro-font.css" media="all" rel="stylesheet" type="text/ntds/stylesheets"/>
-    <link href="/static/ntds/stylesheets/style.css" media="all" rel="stylesheet" type="text/ntds/stylesheets"/>
-    <link href="/static/ntds/stylesheets/afro.css" media="all" rel="alternate stylesheet" title="gray-theme" type="text/ntds/stylesheets"/>
+    <link href="/static/ntds/stylesheets/bootstrap.min.css" media="all" rel="stylesheet" type="text/css"/>
+    <link href="/static/ntds/stylesheets/font-awesome.css" media="all" rel="stylesheet" type="text/css"/>
+    <link href="/static/ntds/stylesheets/afro-font.css" media="all" rel="stylesheet" type="text/css"/>
+    <link href="/static/ntds/stylesheets/style.css" media="all" rel="stylesheet" type="text/css"/>
+    <link href="/static/ntds/stylesheets/afro.css" media="all" rel="alternate stylesheet" title="gray-theme" type="text/css"/>
     <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}mtrack/stylesheets/layout.css" />
     <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}rapidsms/stylesheets/splits.css" />
     <link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}rapidsms/stylesheets/modules.css" />
@@ -39,18 +39,15 @@
             <div class="col-md-7">
 
 
-                <h2 class="number" style="padding-top:0px;font-size:36px;text-align: left;">Manage Reporters</h2>
+                <h2 class="number" style="padding-top:0px;font-size:36px;text-align: left;">Reports</h2>
 
 
             </div>
             <div class="col-md-5">
                 <a class="btn btn-primary" href="/ntds/disease_report/">
-                    Disease Reports
+                    Drug Reports
                 </a>
 
-                <a class="btn btn-primary" href="/ntds/contacts/new/">
-                    Add Reporter
-                </a>
                 <a class="btn btn-primary" href="/ntds/dashboard">
                     &larr;Back
                 </a>
@@ -131,7 +128,7 @@
         <div style="margin-top:10px;">
             <ul class="nav nav-tabs">
                 <li class="active"><a href="#download" data-toggle="tab">Export To Excel</a></li>
-                <li ><a href="#send_sms" data-toggle="tab">Send SMS </a></li>
+
 
             </ul>
         </div>
@@ -140,19 +137,13 @@
             <div class="tab-pane active" id="download">
                 <table style="margin-top:20px;">
                     {{action_forms.0.1.as_table}}
-                    <input type="text" name ="download">
 
                     <tr><td><a id ="send_btn"  class="{{ action_forms.0.1.action_class }} download btn-primary btn" href="javascript:void(0)" onClick="$(this).parents('form').submit()">Export Selected to Excel </a></td></tr>
                 </table>
             </div>
 
 
-            <div class="tab-pane" id="send_sms">
-                <table style="margin-top:20px;">
-                    {{action_forms.1.1.as_table}}
-                    <tr><td><a id="sms_btn" class="{{ action_forms.1.1.action_class }} btn-primary btn " href="javascript:void(0)" onClick="actionx('#sms_btn', '{{ action_forms.1.0 }}',{{ page }});">Send SMS</a></td></tr>
-                </table>
-            </div>
+
 
 
 

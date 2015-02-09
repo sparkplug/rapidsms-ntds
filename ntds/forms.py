@@ -2,13 +2,41 @@
 from django import forms
 
 from generic.forms import FilterForm,ActionForm
-from .utils import ExcelResponse
+from .utils import ExcelResponse,validate_number
 from rapidsms.contrib.locations.models import Location
 from django.utils.safestring import mark_safe
+from .models import Reporter
 
 class ExcelUploadForm(forms.Form):
-    excel_file = forms.FileField(label='Mission Excel File',
+    excel_file = forms.FileField(label='Reporters Excel File',
                                  required=True)
+
+class ReporterForm(forms.Form):
+    name=forms.CharField(max_length=50,required=True,widget=forms.TextInput(attrs={'class': "form-control"}))
+
+    mobile=forms.CharField(max_length=50,required=True,widget=forms.TextInput(attrs={'class': "form-control"}))
+
+    district = forms.ModelChoiceField(queryset=
+                                               Location.objects.filter(type="district").order_by('name'), required=True,help_text="District",widget=forms.Select(attrs={'class': "form-control"}))
+    subcounty = forms.ModelChoiceField(queryset=
+                                      Location.objects.filter(type="sub_county").order_by('name'), required=True,help_text="SubCounty",widget=forms.Select(attrs={'class': "form-control"}))
+
+    parish = forms.ModelChoiceField(queryset=
+                                       Location.objects.filter(type="parish").order_by('name'), required=True,help_text="parish",widget=forms.Select(attrs={'class': "form-control"}))
+
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        mobile = cleaned_data.get('mobile','')
+        mobile_is_valid,cleaned_mobile=validate_number(mobile)
+        if  mobile_is_valid :
+            cleaned_data["mobile"]=cleaned_mobile
+        else:
+            msg = 'Invalid Phone Number'
+            self._errors['mobile'] = self.error_class([msg])
+            del cleaned_data['mobile']
+        return cleaned_data
+
+
 
 
 class DownloadForm(ActionForm):

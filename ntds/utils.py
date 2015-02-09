@@ -7,9 +7,14 @@ from django.http import HttpResponse
 from openpyxl.workbook import Workbook
 import types
 import openpyxl
+import json
 from django.utils.safestring import mark_safe
 import datetime
 from django.core.servers.basehttp import FileWrapper
+
+from django.db.models import Q
+import operator
+import phonenumbers
 
 def handle_progress(prog,message=None):
     if prog.step:
@@ -201,13 +206,45 @@ class JSONResponse(HttpResponse):
                                            status=status or self.status)
 
 
-def handle_progress():
-    router=get_router()
-    for progress in ScriptProgress.objects.all():
-        if progress.question.type=="message":
-            res=progress.progress()
-            if res:
-                router.add_outgoing(progress.connection, res)
+
+def get_all_children(nodes, include_self=False):
+    if not nodes:
+        return Location.tree.none()
+    filters = []
+    for n in nodes:
+        lft, rght = n.lft, n.rght
+        if include_self:
+            lft -=1
+            rght += 1
+        filters.append(Q(tree_id=n.tree_id, lft__gt=lft, rght__lt=rght))
+    q = reduce(operator.or_, filters)
+    return Location.tree.filter(q)
+
+def validate_number(mobile,code="UG"):
+    try:
+        number=phonenumbers.parse(mobile, code)
+    except phonenumbers.NumberParseException:
+        return (False,mobile)
+    number_str=str(number.country_code)+str(number.national_number)
+    if  phonenumbers.is_valid_number(number):
+        return (True,number_str)
+    else:
+        return (False,number_str)
+
+
+def empty(value):
+    if bool(str(value).strip()):
+        return False
+    else:
+        return True
+
+def parse_mobile(value):
+    is_valid,mobile=validate_number(value)
+    if is_valid:
+        return mobile
+    else:
+        return None
+
 
 
 

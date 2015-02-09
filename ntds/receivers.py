@@ -4,30 +4,42 @@ from django.dispatch import receiver
 from settings import NTD_KEYWORDS
 from rapidsms_xforms.models import xform_received
 import datetime
-
-
-
-
-
+from django.contrib.auth.models import  Group
+from django.db.models import F
 
 
 
 def handle_parish(xform, submission, health_provider):
     from .utils import parse_location
-    if (xform.keyword != 'par') or submission.has_errors:
-        return
-
-    p_eav=submission.eav.ntd_parish
+    from .models import Reporter,ReportProgress,NTDReport
+    p_eav=submission.eav.get_values()[0].value
     reporter=Reporter.objects.get(healthprovider_ptr=health_provider)
     parish=parse_location(p_eav,"parish")
     if not parish :
-        submission.response = 'You are attempting to report for parish "{0}" which does not exist.'.format(submission.eav.ntd_parish)
+        submission.response = 'You are attempting to report for parish "{0}" which does not exist.'.format(p_eav)
         submission.has_errors = True
         submission.save()
-    elif parish not in reporter.subcounty.get_children():
-        submission.response = 'The parish "{0}" is not in your subcounty'.format(submission.eav.ntd_parish)
+    elif parish not in reporter.subcounty.children.all():
+        submission.response = 'The parish "{0}" is not in your subcounty'.format(p_eav)
         submission.has_errors = True
         submission.save()
+    else:
+        invalid_d=datetime.datetime.now()-datetime.timedelta(days=365)
+        prog=ReportProgress.objects.filter(parish=parish,updated__gt=invalid_d).order_by("-updated")
+
+        if not prog:
+            rep=NTDReport.objects.create(parish=parish)
+            ReportProgress.objects.create(reporter=reporter,report=report,parish=parish,status=1)
+
+        else:
+            #force updated date change
+            prog=prog[0]
+            prog.save()
+
+
+
+    return True
+
 
 
 
@@ -45,42 +57,152 @@ def default_constraint(xform, submission, health_provider):
 
 
 
-def handle_parish(xform, submission, reporter):
-    return True
+
 
 def handle_villages_targeted(xform, submission, reporter):
+    from .models import ReportProgress
+    values=submission.submission_values().values("attribute__name","value_text")
+    report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-updated")[0]
+    report=report_in_progress.report
+    report.total_villages = int(values['Vilages in Parish'])
+    report.villages_targeted = int(values['Vilages Targeted'])
+    report.villages_treated = int(values['Vilages Treated'])
+    report.villages_incomplete = int(values['Vilages Incomplete'] )
+    report.save()
     return True
 
 def handle_schools_targeted(xform, submission, reporter):
+    from .models import ReportProgress
+    values=submission.submission_values().values("attribute__name","value_text")
+    report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-updated")[0]
+    report=report_in_progress.report
+    report.total_schools = int(values['Schools in Parish'])
+    report.schools_targeted = int(values['Schools Targeted'])
+    report.schools_treated = int(values['Schools Treated'])
+    report.schools_incomplete = int(values['Schools Incomplete'] )
+    report.save()
+
+
     return True
 
 def handle_treated(xform, submission, reporter):
+    from .models import ReportProgress
+    values=submission.submission_values().values("attribute__name","value_text")
+    report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-updated")[0]
+    report=report_in_progress.report
+    report.treated_lt_6_male = int(values['Treated Less Than 6 Months male'])
+    report.treated_lt_6_female = int(values['Treated Less Than 6 Months female'])
+    report.treated_6_to_4_male = int(values['Treated 6 Months to 4 years male'])
+    report.treated_6_to_4_female = int(values['Treated 6 Months to 4 years female'])
+    report.treated_4_to_14_male = int(values['Treated 5 to 14 male'])
+    report.treated_4_to_14_female = int(values['Treated 5 to 14 female'])
+    report.treated_gt_14_male = int(values['Treated greater than 15 male'])
+    report.treated_gt_14_female = int(values['Treated greater than 15 female'])
+    report.save()
     return True
 
 
 def  handle_pop(xform, submission, reporter):
+    from .models import ReportProgress
+    values=submission.submission_values().values("attribute__name","value_text")
+    report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-updated")[0]
+    report=report_in_progress.report
+    report.pop_lt_6_male = int(values['Pop Less Than 6 Months male'])
+    report.pop_lt_6_female = int(values['Pop Less Than 6 Months female'])
+    report.pop_6_to_4_male = int(values['Pop 6 Months to 4 years male'])
+    report.pop_6_to_4_female = int(values['Pop 6 Months to 4 years female'])
+    report.pop_4_to_14_male = int(values['Pop 5 to 14 male'])
+    report.pop_4_to_14_female = int(values['Pop 5 to 14 female'])
+    report.pop_gt_14_male = int(values['Pop greater than 15 male'])
+    report.pop_gt_14_female = int(values['Pop greater than 15 female'])
+    report.save()
     return True
 
 
-def  handle_drugs_used(xform, submission, reporter):
+
+def handle_alb(xform, submission, reporter):
+    from .models import ReportProgress
+    values=submission.submission_values().values("attribute__name","value_text")
+    report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-updated")[0]
+    report=report_in_progress.report
+    report.alb = int(values["Alb Usage"])
+    report.save()
+
+
+    return True
+def handle_ivm(xform, submission, reporter):
+    from .models import ReportProgress
+    values=submission.submission_values().values("attribute__name","value_text")
+    report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-updated")[0]
+    report=report_in_progress.report
+    report.ivm = int(values["Ivm Usage"])
+    report.save()
+    return True
+def handle_pzq(xform, submission, reporter):
+    from .models import ReportProgress
+    values=submission.submission_values().values("attribute__name","value_text")
+    report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-updated")[0]
+    report=report_in_progress.report
+    report.pzq = int(values["PZQ Usage"])
+    report.save()
+    return True
+def handle_mbd(xform, submission, reporter):
+    from .models import ReportProgress
+    values=submission.submission_values().values("attribute__name","value_text")
+    report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-updated")[0]
+    report=report_in_progress.report
+    report.mbd = int(values["MBD Usage"])
+    report.save()
+    return True
+def handle_zitht(xform, submission, reporter):
+    from .models import ReportProgress
+    values=submission.submission_values().values("attribute__name","value_text")
+    report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-updated")[0]
+    report=report_in_progress.report
+    report.ttr = int(values["Tet Usage"])
+    report.save()
+    return True
+def handle_ziths(xform, submission, reporter):
+    from .models import ReportProgress
+    values=submission.submission_values().values("attribute__name","value_text")
+    report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-updated")[0]
+    report=report_in_progress.report
+    report.ziths = int(values["Zith Syrup usage"])
+    report.save()
+    return True
+def handle_tetra(xform, submission, reporter):
+    from .models import ReportProgress
+    values=submission.submission_values().values("attribute__name","value_text")
+    report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-updated")[0]
+    report=report_in_progress.report
+    report.zitht = int(values["zith Tab Usage"])
+    report.save()
     return True
 
 
-def handle_drugs_left(xform, submission, reporter):
-    return True
+keyword_handlers={
 
-xform_constraints={
+    "par":handle_parish,
+"vlg":handle_villages_targeted,
+"sch":handle_schools_targeted,
+"agg":handle_treated,
+"pop":handle_pop,
+"alb":handle_alb,
+"ivm":handle_ivm,
+"pzq":handle_pzq,
+"mbd":handle_mbd,
+"ziths":handle_ziths,
+"zitht":handle_zitht,
+    "ttr":handle_tetra
 
-    "ntd_parish":handle_parish,
-"ntd_villages_targeted":handle_villages_targeted,
-"ntd_schools_targeted":handle_schools_targeted,
-"ntd_treated_by_age":handle_treated,
-"ntd_village_pop_by_age":handle_pop,
-"ntd_drugs_used":handle_drugs_used,
-"ntd_drugs_left":handle_drugs_left
+
+
+
 
 
 }
+
+
 
 
 @receiver(xform_received)
@@ -92,52 +214,61 @@ def handle_submission(sender, **kwargs):
         return
 
     submission = kwargs['submission']
+    role=Group.objects.get(name="Ntds")
+    # manually check restrict to
+
+
+
     if submission.has_errors:
         return
 
     try:
 
         health_provider = submission.connection.contact.healthproviderbase.healthprovider
-    except:
-        if xform.keyword in NTD_KEYWORDS:
-            submission.response = "You must be a reporter for NTDS. Please register first before sending any information"
+        reporter = Reporter.objects.get(healthprovider_ptr=health_provider)
+        if not role in reporter.groups.all():
+            submission.response = "You must be a reporter for NTDS"
             submission.has_errors = True
             submission.save()
+
+
+    except:
+
+        submission.response = "You must be a reporter for NTDS"
+        submission.has_errors = True
+        submission.save()
         return
 
-    if not xform.keyword in ['par']:
-        report_in_progress = ReportProgress.objects.filter(provider=health_provider,status=1)
+
+
+    if xform.keyword in ['par']:
+        return handle_parish(xform, submission, health_provider)
+
+
+    else:
+        report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-created")[0]
         if not report_in_progress.exists():
             submission.response = "Please tell us what POW you are reporting for before submitting data."
             submission.has_errors = True
             submission.save()
             return
 
-    if xform.keyword in  NTD_KEYWORDS and not (xform.keyword in ['par']):
+
+
+
+
+    if xform.keyword in  NTD_KEYWORDS:
+        keyword_handlers["xform.keyword"](xform, submission, health_provider)
 
         value_list = []
+
         for v in submission.eav.get_values().order_by('attribute__xformfield__order'):
-            value_list.append("%s %d" % (v.attribute.name, v.value_int))
+            value_list.append("%s %s" % (v.attribute.name, v.value))
         if len(value_list) > 1:
             value_list[len(value_list) - 1] = " and %s" % value_list[len(value_list) - 1]
         health_provider.last_reporting_date = datetime.datetime.now().date()
         health_provider.save()
-        try:
-            health_provider.facility.last_reporting_date = datetime.datetime.now().date()
-            health_provider.facility.save()
-        except:
-            pass
+
         submission.response = "You reported %s.If there is an error,please resend." % ','.join(value_list)
         submission.save()
-
-    if not xform.keyword in ['par']:
-        report_in_progress.xform_report.submissions.add(submission)
-        report_in_progress.xform_report.save()  # i may not need this
-        submission.save()
-    else:
-        ## 4. -> process constraints from the DB (pow handler)
-
-        for c in XFormReport.objects.get(name='NTDs').constraints:
-            # WARNING: I'm (intentionally) not catching KeyError exceptions so all constraints must exist
-            xform_constraints.get(xform.keyword,default_constraint)(xform, submission, health_provider)
-
+        return

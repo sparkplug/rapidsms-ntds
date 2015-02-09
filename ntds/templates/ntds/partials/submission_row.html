@@ -1,0 +1,29 @@
+<td>
+    {{ object.connection.identity }}
+</td>
+
+<td>
+    {{ object.connection.contact.location}}
+</td>
+
+
+
+    <td>
+        {% for value in object.submission_values %}
+            {% ifequal field.pk value.attribute.pk %}
+                {% if field.xform_type == 'binary' %}
+                    <a href="{{ value.value.url }}">{{ value.value }}</a>
+                {% else %}
+                    {{ value.value }}
+                {% endif %}
+            {% endifequal %}
+        {% endfor %}
+    </td>
+
+<td>
+    <div class="buttons">
+        <a href="/xforms/submissions/{{ object.pk }}/edit/">
+            <img src="{{ MEDIA_URL }}rapidsms_xforms/icons/silk/pencil.png" alt=""/> Edit
+        </a>
+    </div>
+</td>

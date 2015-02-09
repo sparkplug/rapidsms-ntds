@@ -36,9 +36,7 @@ class NTDSTests(TestCase): #pragma: no cover
 
         user, created = User.objects.get_or_create(username='admin')
         self.user=user
-        site = Site.objects.get_or_create(pk=settings.SITE_ID, defaults={
-            'domain':'example.com',
-            })
+
 
         self.router=get_router()
         contact1,_=Contact.objects.get_or_create(name="foo")
@@ -123,26 +121,26 @@ class NTDSTests(TestCase): #pragma: no cover
         OptinWord.objects.get_or_create(language="en",words="ntds")
 
         self.reg_xform,_ = XForm.on_site.get_or_create(name='ntd_parish', keyword='par', owner=self.user, command_prefix=None, separator = '.',
-                                                          site=Site.objects.get_current(), response="The parish has been set to {{ parish }}. Please send the data for it")
+                                                          site=Site.objects.get_current(), response="Please start sending data for {{ parish }} parish.")
 
 
-        f1,_ = self.reg_xform.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Reporting Parish', command='parish', order=0)
+        self.parish_field,_ = self.reg_xform.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Reporting Parish', command='parish', order=0)
 
         self.villages_targeted,_ = XForm.on_site.get_or_create(name='ntd_villages_targeted', keyword='vlg', owner=self.user, command_prefix=None, separator = '.',
                                                                site=Site.objects.get_current(), response='Thanks for your report')
 
-        f1,_ = self.villages_targeted.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Vilages in Parish', command='vlg_no', order=0)
-        f1,_ = self.villages_targeted.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Vilages Targeted', command='vlg_tgt', order=1)
-        f1,_ = self.villages_targeted.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Vilages Treated', command='vlg_trd', order=2)
-        f1,_ = self.villages_targeted.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Vilages Incomplete', command='vlg_incpt', order=3)
+        self.vlg_no_field,_ = self.villages_targeted.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Vilages in Parish', command='vlg_no', order=0)
+        self.vlg_tgt_field,_ = self.villages_targeted.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Vilages Targeted', command='vlg_tgt', order=1)
+        self.vlg_trd_field,_ = self.villages_targeted.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Vilages Treated', command='vlg_trd', order=2)
+        self.vlg_incpt_field,_ = self.villages_targeted.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Vilages Incomplete', command='vlg_incpt', order=3)
 
 
         self.villages_targeted,_ = XForm.on_site.get_or_create(name='ntd_schools_targeted', keyword='sch', owner=self.user, command_prefix=None, separator = '.',
                                                                site=Site.objects.get_current(), response='Thanks for your report')
 
-        f1,_ = self.villages_targeted.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Schools in Parish', command='sch_no', order=0)
-        f1,_ = self.villages_targeted.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Schools Targeted', command='sch_tgt', order=1)
-        f1,_ = self.villages_targeted.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Schools Treated', command='sch_trd', order=2)
+        self.sch_no_field,_ = self.villages_targeted.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Schools in Parish', command='sch_no', order=0)
+        self.sch_tgt_field,_ = self.villages_targeted.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Schools Targeted', command='sch_tgt', order=1)
+        self.sch_trd_field,_ = self.villages_targeted.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Schools Treated', command='sch_trd', order=2)
         f1,_ = self.villages_targeted.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Schools Incomplete', command='sch_incpt', order=3)
 
 
@@ -178,30 +176,48 @@ class NTDSTests(TestCase): #pragma: no cover
 
 
 
-        self.drugs_used,_ = XForm.on_site.get_or_create(name='ntd_drugs_used', keyword='dru', owner=self.user, command_prefix=None, separator = '.',
+        self.alb_usage,_ = XForm.on_site.get_or_create(name='alb_usage', keyword='alb', owner=self.user, command_prefix=None, separator = '.',
                                                                        site=Site.objects.get_current(), response='Thanks for your report')
 
-        f1,_ = self.drugs_used.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='praziquantel', command='pzq', order=0)
-        f1,_ = self.drugs_used.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='mebendazole', command='mbd', order=1)
-        f1,_ = self.drugs_used.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='albendazole', command='alb', order=2)
-        f1,_ = self.drugs_used.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='ivermectin', command='ivm', order=3)
-        f1,_ = self.drugs_used.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='teo', command='tetracycline', order=4)
-        f1,_ = self.drugs_used.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Zithromax syrup', command='zith_syr', order=5)
-        f1,_ = self.drugs_used.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Zithromax tabs', command='zith_tabs', order=6)
+        f1,_ = self.alb_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='alb_used', command='used', order=0)
+        f1,_ = self.alb_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='alb_left', command='left', order=1)
 
 
+        self.ivm_usage,_ = XForm.on_site.get_or_create(name='ivm_usage', keyword='ivm', owner=self.user, command_prefix=None, separator = '.',
+                                                       site=Site.objects.get_current(), response='Thanks for your report')
 
-        self.drugs_leftover,_ = XForm.on_site.get_or_create(name='ntd_drugs_left', keyword='drl', owner=self.user, command_prefix=None, separator = '.',
+        f1,_ = self.ivm_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='ivm_used', command='used', order=0)
+        f1,_ = self.ivm_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='ivm_left', command='left', order=1)
+
+        self.pzq_usage,_ = XForm.on_site.get_or_create(name='pzq_usage', keyword='pzq', owner=self.user, command_prefix=None, separator = '.',
+                                                       site=Site.objects.get_current(), response='Thanks for your report')
+
+        f1,_ = self.pzq_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='pzq_used', command='used', order=0)
+        f1,_ = self.pzq_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='pzq_left', command='left', order=1)
+
+        self.mbd_usage,_ = XForm.on_site.get_or_create(name='mbd_usage', keyword='mbd', owner=self.user, command_prefix=None, separator = '.',
+                                                       site=Site.objects.get_current(), response='Thanks for your report')
+
+        f1,_ = self.mbd_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='mbd_used', command='used', order=0)
+        f1,_ = self.mbd_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='mbd_left', command='left', order=1)
+
+        self.tet_usage,_ = XForm.on_site.get_or_create(name='tet_usage', keyword='tet', owner=self.user, command_prefix=None, separator = '.',
+                                                       site=Site.objects.get_current(), response='Thanks for your report')
+
+        f1,_ = self.tet_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='tet_used', command='used', order=0)
+        f1,_ = self.tet_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='tet_left', command='left', order=1)
+
+        self.ziths_usage,_ = XForm.on_site.get_or_create(name='ziths_usage', keyword='ziths', owner=self.user, command_prefix=None, separator = '.',
                                                         site=Site.objects.get_current(), response='Thanks for your report')
 
-        f1,_ = self.drugs_leftover.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='praziquantel', command='pzq', order=0)
-        f1,_ = self.drugs_leftover.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='mebendazole', command='mbd', order=1)
-        f1,_ = self.drugs_leftover.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='albendazole', command='alb', order=2)
-        f1,_ = self.drugs_leftover.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='ivermectin', command='ivm', order=3)
-        f1,_ = self.drugs_leftover.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='teo', command='tetracycline', order=4)
-        f1,_ = self.drugs_leftover.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Zithromax syrup', command='zith_syr', order=5)
-        f1,_ = self.drugs_leftover.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Zithromax tabs', command='zith_tabs', order=6)
+        f1,_ = self.ziths_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='ziths_used', command='used', order=0)
+        f1,_ = self.ziths_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='ziths_left', command='left', order=1)
 
+        self.zitht_usage,_ = XForm.on_site.get_or_create(name='zitht_usage', keyword='zitht', owner=self.user, command_prefix=None, separator = '.',
+                                                         site=Site.objects.get_current(), response='Thanks for your report')
+
+        f1,_ = self.zitht_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='zitht_used', command='used', order=0)
+        f1,_ = self.zitht_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='zitht_left', command='left', order=1)
 
 
 
@@ -290,6 +306,11 @@ class NTDSTests(TestCase): #pragma: no cover
     def parish_registration(self):
         self.fakeIncoming('par gwegdiya', connection=self.connection1)
         self.assertEquals(Message.objects.filter(connection=self.connection1,direction="O").order_by('-date')[0].text, 'You must be a reporter for FHDs. Please register first before sending any information')
+        submission = self.xform.process_sms_submission(IncomingMessage(None, "survey +age 10 +name matt berg +gender male"))
+
+        fields = self.xform.fields.all()
+        self.failUnlessEqual(self.gender_field.pk, fields[0].pk)
+        self.failUnlessEqual(self.field.pk, fields[1].pk)
 
 
     def villages_targeted_submission(self):

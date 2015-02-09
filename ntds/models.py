@@ -4,8 +4,7 @@ from django.utils.translation import (ugettext, activate, deactivate)
 from django.conf import settings
 from healthmodels.models.HealthProvider import HealthProvider
 from rapidsms_xforms.models import XForm,XFormReportSubmission
-
-
+from .receivers import handle_submission
 
 class OptinWord(models.Model):
     words = models.CharField(max_length=500)
@@ -47,12 +46,28 @@ class NTDReport(models.Model):
     treated_4_to_14_female = models.IntegerField(max_length=10,null=True,blank=True)
     treated_gt_14_male = models.IntegerField(max_length=10,null=True,blank=True)
     treated_gt_14_female = models.IntegerField(max_length=10,null=True,blank=True)
+    pop_lt_6_male = models.IntegerField(max_length=10,null=True,blank=True)
+    pop_lt_6_female = models.IntegerField(max_length=10,null=True,blank=True)
+    pop_6_to_4_male = models.IntegerField(max_length=10,null=True,blank=True)
+    pop_6_to_4_female = models.IntegerField(max_length=10,null=True,blank=True)
+    pop_4_to_14_male = models.IntegerField(max_length=10,null=True,blank=True)
+    pop_4_to_14_female = models.IntegerField(max_length=10,null=True,blank=True)
+    pop_gt_14_male = models.IntegerField(max_length=10,null=True,blank=True)
+    pop_gt_14_female = models.IntegerField(max_length=10,null=True,blank=True)
     lymphatic =  models.IntegerField(max_length=10,null=True,blank=True)
     filariasis = models.IntegerField(max_length=10,null=True,blank=True)
     onchocerciasis = models.IntegerField(max_length=10,null=True,blank=True)
     schistosomiasis = models.IntegerField(max_length=10,null=True,blank=True)
     helminthiasis = models.IntegerField(max_length=10,null=True,blank=True)
     trachoma = models.IntegerField(max_length=10,null=True,blank=True)
+    alb = models.IntegerField(max_length=10,null=True,blank=True)
+    ivm = models.IntegerField(max_length=10,null=True,blank=True)
+    pzq = models.IntegerField(max_length=10,null=True,blank=True)
+    mbd = models.IntegerField(max_length=10,null=True,blank=True)
+    ttr = models.IntegerField(max_length=10,null=True,blank=True)
+    ziths = models.IntegerField(max_length=10,null=True,blank=True)
+    zitht = models.IntegerField(max_length=10,null=True,blank=True)
+
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -63,7 +78,8 @@ class ReportProgress(models.Model):
     reporter = models.ForeignKey("Reporter")
     status = models.IntegerField(max_length=2 ,choices=((ACTIVE,"inprogress"),(COMPLETE,"complete")))
     parish = models.ForeignKey(Location)
-    xform_report = models.ForeignKey(XFormReportSubmission)
+    xform_reports = models.ManyToManyField(XFormReportSubmission)
+    report=models.ForeignKey(NTDReport)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -77,6 +93,8 @@ class Reporter(HealthProvider):
     district = models.ForeignKey(Location,related_name="districts",null=True,blank=True)
     subcounty = models.ForeignKey(Location,related_name="subcounties",null=True,blank=True)
     reporting_area=models.ManyToManyField(Location)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
 
     def save(self, *args, **kwargs):
         if not self.district and self.location:

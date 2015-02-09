@@ -5,9 +5,9 @@
     <td>{{ object.location  }}</td>
     <td>{{ object.subcounty  }}</td>
     <td>{{ object.district }}</td>
-    <td>{{ object.connections.all.0  }}</td>
-    <td>{{ object.status  }}</td>
-    <td><a href="">Submissions</a></td>
+    <td>{{ object.default_connection  }}</td>
+    <td>{{ object.status|default:"True" }}</td>
+    <td><a href="/ntds/submissions/{{ object.pk }}/">Submissions</a></td>
 
 
 {% endblock %}
