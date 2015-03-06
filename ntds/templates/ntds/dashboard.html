@@ -42,18 +42,24 @@
     <script src="{{ MEDIA_URL }}ntds/javascripts/parishes.js"></script>
 
     <script>
-    var gdata={{ pdata }};
-    var ldata={{ ldata }};
+    var district_gdata={{ district_pdata }};
+    var district_ldata={{ district_ldata }};
+
+    var subcounty_gdata={{ subcounty_pdata }};
+    var subcounty_ldata={{ subcounty_ldata }};
+
+    var parish_gdata={{ parish_pdata }};
+    var parish_ldata={{ parish_ldata }};
 
 
         $(function(){
-            $("#world-map").vectorMap({
+            $("#districts").vectorMap({
 
                 backgroundColor: '#8f1417',
                 map: 'districts_mill_en',
                 series: {
                 regions: [{
-                    values: gdata,
+                    values: district_gdata,
                     scale: ['#C8EEFF', '#0071A4'],
                     normalizeFunction: 'polynomial'
                 }]},
@@ -80,19 +86,122 @@
                     }
                 },
                 onRegionTipShow: function(e, el, code){
-                    if (!ldata[code]) {
+                    if (!district_ldata[code]) {
 
 
                     }
                     else
                     {
-                    el.html(el.html()+' Treated '+gdata[code]+' '+ldata[code]+' Patients');
+                    el.html(el.html()+' Treated '+district_gdata[code]+' '+district_ldata[code]+' Patients');
 
                 }
 
 
             }
-        });});
+        });
+
+
+
+            $("#subcounties").vectorMap({
+
+                backgroundColor: '#8f1417',
+                map: 'subcounties_mill_en',
+                series: {
+                    regions: [{
+                        values: subcounty_gdata,
+                        scale: ['#C8EEFF', '#0071A4'],
+                        normalizeFunction: 'polynomial'
+                    }]},
+                regionStyle: {
+                    initial: {
+                        fill: 'white',
+                        "fill-opacity": 1,
+                        stroke: 'none',
+                        "stroke-width": 0,
+                        "stroke-opacity": 1
+                    },
+                    hover: {
+                        "fill-opacity": 0.8
+                    }
+                },
+                markerStyle: {
+                    initial: {
+                        r: 8
+                    },
+                    hover: {
+                        r: 12,
+                        stroke: 'rgba(29,210,175,0.3)',
+                        "stroke-width": 6
+                    }
+                },
+                onRegionTipShow: function(e, el, code){
+                    if (!subcounty_ldata[code]) {
+
+
+                    }
+                    else
+                    {
+                        el.html(el.html()+' Treated '+subcounty_gdata[code]+' '+subcounty_ldata[code]+' Patients');
+
+                    }
+
+
+                }
+            });
+
+
+            $("#parishes").vectorMap({
+
+                backgroundColor: '#8f1417',
+                map: 'parishes_mill_en',
+                series: {
+                    regions: [{
+                        values: parish_gdata,
+                        scale: ['#C8EEFF', '#0071A4'],
+                        normalizeFunction: 'polynomial'
+                    }]},
+                regionStyle: {
+                    initial: {
+                        fill: 'white',
+                        "fill-opacity": 1,
+                        stroke: 'none',
+                        "stroke-width": 0,
+                        "stroke-opacity": 1
+                    },
+                    hover: {
+                        "fill-opacity": 0.8
+                    }
+                },
+                markerStyle: {
+                    initial: {
+                        r: 8
+                    },
+                    hover: {
+                        r: 12,
+                        stroke: 'rgba(29,210,175,0.3)',
+                        "stroke-width": 6
+                    }
+                },
+                onRegionTipShow: function(e, el, code){
+                    if (!parish_ldata[code]) {
+
+
+                    }
+                    else
+                    {
+                        el.html(el.html()+' Treated '+parish_gdata[code]+' '+parish_ldata[code]+' Patients');
+
+                    }
+
+
+                }
+            });
+
+
+
+
+
+        });
     </script>
 
 {% endblock %}
@@ -156,6 +265,15 @@
     </div>
 
 <h2>Disease Prevalence By District</h2>
-    <div id="world-map" style="width: 600px; height: 400px"></div>
+    <h3>Reports By District</h3>
+    <div id="districts" style="width: 600px; height: 400px"></div>
+
+
+<h3>Reports By Subcounty</h3>
+    <div id="subcounties" style="width: 600px; height: 400px"></div>
+
+    <h3>Reports By Parish</h3>
+
+    <div id="parishes" style="width: 600px; height: 400px"></div>
 
 {% endblock %}

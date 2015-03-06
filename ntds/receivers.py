@@ -28,7 +28,7 @@ def handle_parish(xform, submission, health_provider):
         prog=ReportProgress.objects.filter(parish=parish,updated__gt=invalid_d).order_by("-updated")
 
         if not prog:
-            rep=NTDReport.objects.create(parish=parish)
+            report=NTDReport.objects.create(reporter=reporter)
             ReportProgress.objects.create(reporter=reporter,report=report,parish=parish,status=1)
 
         else:
@@ -41,7 +41,13 @@ def handle_parish(xform, submission, health_provider):
     return True
 
 
+def pivot_dicts(dict_list):
+    toret={}
+    for d in dict_list:
+        dd={d["attribute__name"]:d["value_text"]}
+        toret.update(dd)
 
+    return toret
 
 def update_report(report,xform):
     pass
@@ -61,7 +67,8 @@ def default_constraint(xform, submission, health_provider):
 
 def handle_villages_targeted(xform, submission, reporter):
     from .models import ReportProgress
-    values=submission.submission_values().values("attribute__name","value_text")
+    values_list=submission.submission_values().values("attribute__name","value_text")
+    values=pivot_dicts(values_list)
     report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-updated")[0]
     report=report_in_progress.report
     report.total_villages = int(values['Vilages in Parish'])
@@ -73,7 +80,8 @@ def handle_villages_targeted(xform, submission, reporter):
 
 def handle_schools_targeted(xform, submission, reporter):
     from .models import ReportProgress
-    values=submission.submission_values().values("attribute__name","value_text")
+    values_list=submission.submission_values().values("attribute__name","value_text")
+    values=pivot_dicts(values_list)
     report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-updated")[0]
     report=report_in_progress.report
     report.total_schools = int(values['Schools in Parish'])
@@ -87,7 +95,8 @@ def handle_schools_targeted(xform, submission, reporter):
 
 def handle_treated(xform, submission, reporter):
     from .models import ReportProgress
-    values=submission.submission_values().values("attribute__name","value_text")
+    values_list=submission.submission_values().values("attribute__name","value_text")
+    values=pivot_dicts(values_list)
     report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-updated")[0]
     report=report_in_progress.report
     report.treated_lt_6_male = int(values['Treated Less Than 6 Months male'])
@@ -104,7 +113,8 @@ def handle_treated(xform, submission, reporter):
 
 def  handle_pop(xform, submission, reporter):
     from .models import ReportProgress
-    values=submission.submission_values().values("attribute__name","value_text")
+    values_list=submission.submission_values().values("attribute__name","value_text")
+    values=pivot_dicts(values_list)
     report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-updated")[0]
     report=report_in_progress.report
     report.pop_lt_6_male = int(values['Pop Less Than 6 Months male'])
@@ -120,93 +130,342 @@ def  handle_pop(xform, submission, reporter):
 
 
 
+
+
+def  handle_pop_fil(xform, submission, reporter):
+    from .models import ReportProgress
+    values_list=submission.submission_values().values("attribute__name","value_text")
+    values=pivot_dicts(values_list)
+    report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-updated")[0]
+    report=report_in_progress.report
+    report.pop_u_5_male_fil = int(values['Pop Under 5 male'])
+    report.pop_u_5_female_fil = int(values['Pop Under 5 female'])
+    report.pop_4_to_14_male_fil = int(values['Pop 5 to 14 male'])
+    report.pop_4_to_14_female_fil = int(values['Pop 5 to 14 female'])
+    report.pop_gt_14_male_fil = int(values['Pop greater than 15 male'])
+    report.pop_gt_14_female_fil = int(values['Pop greater than 15 female'])
+    report.save()
+    return True
+
+
+
+
+
+def handle_treated_fil(xform, submission, reporter):
+    from .models import ReportProgress
+    values_list=submission.submission_values().values("attribute__name","value_text")
+    values=pivot_dicts(values_list)
+    report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-updated")[0]
+    report=report_in_progress.report
+    report.treated_u_5_male_fil = int(values['Treated Under 5 male'])
+    report.treated_u_5_female_fil = int(values['Treated Under 5 female'])
+    report.treated_4_to_14_male_fil = int(values['Treated 5 to 14 male'])
+    report.treated_4_to_14_female_fil = int(values['Treated 5 to 14 female'])
+    report.treated_gt_14_male_fil = int(values['Treated greater than 15 male'])
+    report.treated_gt_14_female_fil = int(values['Treated greater than 15 female'])
+    report.filariasis=int(values['Treated 5 to 14 male'])+int(values['Treated 5 to 14 female'])+int(values['Treated greater than 15 male'])+int(values['Treated greater than 15 female'])
+    report.save()
+    return True
+
+
+def  handle_pop_trac(xform, submission, reporter):
+    from .models import ReportProgress
+    values_list=submission.submission_values().values("attribute__name","value_text")
+    values=pivot_dicts(values_list)
+    report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-updated")[0]
+    report=report_in_progress.report
+    report.pop_lt_6_male_trac = int(values['Pop Less Than 6 Months male'])
+    report.pop_lt_6_female_trac = int(values['Pop Less Than 6 Months female'])
+    report.pop_6_to_4_male_trac = int(values['Pop 6 Months to 4 years male'])
+    report.pop_6_to_4_female_trac = int(values['Pop 6 Months to 4 years female'])
+    report.pop_4_to_14_male_trac = int(values['Pop 5 to 14 male'])
+    report.pop_4_to_14_female_trac = int(values['Pop 5 to 14 female'])
+    report.pop_gt_14_male_trac = int(values['Pop greater than 15 male'])
+    report.pop_gt_14_female_trac = int(values['Pop greater than 15 female'])
+    report.save()
+    return True
+
+def handle_treated_trac(xform, submission, reporter):
+    from .models import ReportProgress
+    values_list=submission.submission_values().values("attribute__name","value_text")
+    values=pivot_dicts(values_list)
+    report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-updated")[0]
+    report=report_in_progress.report
+    report.treated_lt_6_male_trac = int(values['Treated Less Than 6 Months male'])
+    report.treated_lt_6_female_trac = int(values['Treated Less Than 6 Months female'])
+    report.treated_6_to_4_male_trac = int(values['Treated 6 Months to 4 years male'])
+    report.treated_6_to_4_female_trac = int(values['Treated 6 Months to 4 years female'])
+    report.treated_4_to_14_male_trac = int(values['Treated 5 to 14 male'])
+    report.treated_4_to_14_female_trac = int(values['Treated 5 to 14 female'])
+    report.treated_gt_14_male_trac = int(values['Treated greater than 15 male'])
+    report.treated_gt_14_female_trac = int(values['Treated greater than 15 female'])
+    report.trachoma=int(values['Treated 6 Months to 4 years female'])+int(values['Treated 6 Months to 4 years male'])+int(values['Treated Less Than 6 Months male'])+int(values['Treated Less Than 6 Months female'])+int(values['Treated 5 to 14 male'])+int(values['Treated 5 to 14 female'])+int(values['Treated greater than 15 male'])+int(values['Treated greater than 15 female'])
+    report.save()
+    return True
+
+def  handle_pop_lyf(xform, submission, reporter):
+    from .models import ReportProgress
+    values_list=submission.submission_values().values("attribute__name","value_text")
+    values=pivot_dicts(values_list)
+    report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-updated")[0]
+    report=report_in_progress.report
+    report.pop_u_5_male_lyf = int(values['Pop Under 5 male'])
+    report.pop_u_5_female_lyf = int(values['Pop Under 5 female'])
+    report.pop_4_to_14_male_lyf = int(values['Pop 5 to 14 male'])
+    report.pop_4_to_14_female_lyf = int(values['Pop 5 to 14 female'])
+    report.pop_gt_14_male_lyf = int(values['Pop greater than 15 male'])
+    report.pop_gt_14_female_lyf = int(values['Pop greater than 15 female'])
+    report.save()
+    return True
+
+
+def handle_treated_lyf(xform, submission, reporter):
+    from .models import ReportProgress
+    values_list=submission.submission_values().values("attribute__name","value_text")
+    values=pivot_dicts(values_list)
+    report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-updated")[0]
+    report=report_in_progress.report
+    report.treated_u_5_male_lyf = int(values['Treated Under 5 male'])
+    report.treated_u_5_female_lyf = int(values['Treated Under 5 female'])
+    report.treated_4_to_14_male_lyf = int(values['Treated 5 to 14 male'])
+    report.treated_4_to_14_female_lyf = int(values['Treated 5 to 14 female'])
+    report.treated_gt_14_male_lyf = int(values['Treated greater than 15 male'])
+    report.treated_gt_14_female_lyf = int(values['Treated greater than 15 female'])
+    report.lymphatic=int(values['Treated 5 to 14 male'])+int(values['Treated 5 to 14 female'])+int(values['Treated greater than 15 male'])+int(values['Treated greater than 15 female'])
+    report.save()
+    return True
+
+def  handle_pop_hel(xform, submission, reporter):
+    from .models import ReportProgress
+    values_list=submission.submission_values().values("attribute__name","value_text")
+    values=pivot_dicts(values_list)
+    report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-updated")[0]
+    report=report_in_progress.report
+    report.pop_u_5_male_hel = int(values['Pop Under 5 male'])
+    report.pop_u_5_female_hel = int(values['Pop Under 5 female'])
+    report.pop_4_to_14_male_hel = int(values['Pop 5 to 14 male'])
+    report.pop_4_to_14_female_hel = int(values['Pop 5 to 14 female'])
+    report.pop_gt_14_male_hel = int(values['Pop greater than 15 male'])
+    report.pop_gt_14_female_hel = int(values['Pop greater than 15 female'])
+    report.save()
+    return True
+
+def handle_treated_hel(xform, submission, reporter):
+    from .models import ReportProgress
+    values_list=submission.submission_values().values("attribute__name","value_text")
+    values=pivot_dicts(values_list)
+    report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-updated")[0]
+    report=report_in_progress.report
+    report.treated_u_5_male_hel = int(values['Treated Under 5 male'])
+    report.treated_u_5_female_hel = int(values['Treated Under 5 female'])
+    report.treated_4_to_14_male_hel = int(values['Treated 5 to 14 male'])
+    report.treated_4_to_14_female_hel = int(values['Treated 5 to 14 female'])
+    report.treated_gt_14_male_hel = int(values['Treated greater than 15 male'])
+    report.treated_gt_14_female_hel = int(values['Treated greater than 15 female'])
+    report.helminthiasis=int(values['Treated 5 to 14 male'])+int(values['Treated 5 to 14 female'])+int(values['Treated greater than 15 male'])+int(values['Treated greater than 15 female'])
+    report.save()
+    return True
+
+def  handle_pop_schi(xform, submission, reporter):
+    from .models import ReportProgress
+    values_list=submission.submission_values().values("attribute__name","value_text")
+    values=pivot_dicts(values_list)
+    report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-updated")[0]
+    report=report_in_progress.report
+    report.pop_u_5_male_schi = int(values['Pop Under 5 male'])
+    report.pop_u_5_female_schi = int(values['Pop Under 5 female'])
+    report.pop_4_to_14_male_schi = int(values['Pop 5 to 14 male'])
+    report.pop_4_to_14_female_schi = int(values['Pop 5 to 14 female'])
+    report.pop_gt_14_male_schi = int(values['Pop greater than 15 male'])
+    report.pop_gt_14_female_schi = int(values['Pop greater than 15 female'])
+
+    report.save()
+    return True
+
+def handle_treated_schi(xform, submission, reporter):
+    from .models import ReportProgress
+    values_list=submission.submission_values().values("attribute__name","value_text")
+    values=pivot_dicts(values_list)
+    report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-updated")[0]
+    report=report_in_progress.report
+    report.treated_u_5_male_schi = int(values['Treated Under 5 male'])
+    report.treated_u_5_female_schi = int(values['Treated Under 5 female'])
+    report.treated_4_to_14_male_schi = int(values['Treated 5 to 14 male'])
+    report.treated_4_to_14_female_schi = int(values['Treated 5 to 14 female'])
+    report.treated_gt_14_male_schi = int(values['Treated greater than 15 male'])
+    report.treated_gt_14_female_schi = int(values['Treated greater than 15 female'])
+    report.schistosomiasis=int(values['Treated 5 to 14 male'])+int(values['Treated 5 to 14 female'])+int(values['Treated greater than 15 male'])+int(values['Treated greater than 15 female'])
+    report.save()
+    return True
+
+def  handle_pop_onch(xform, submission, reporter):
+    from .models import ReportProgress
+    values_list=submission.submission_values().values("attribute__name","value_text")
+    values=pivot_dicts(values_list)
+    report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-updated")[0]
+    report=report_in_progress.report
+    report.pop_u_5_male_onch = int(values['Pop Under 5 male'])
+    report.pop_u_5_female_onch = int(values['Pop Under 5 female'])
+    report.pop_4_to_14_male_onch = int(values['Pop 5 to 14 male'])
+    report.pop_4_to_14_female_onch = int(values['Pop 5 to 14 female'])
+    report.pop_gt_14_male_onch = int(values['Pop greater than 15 male'])
+    report.pop_gt_14_female_onch = int(values['Pop greater than 15 female'])
+    report.save()
+    return True
+
+
+def handle_treated_onch(xform, submission, reporter):
+    from .models import ReportProgress
+    values_list=submission.submission_values().values("attribute__name","value_text")
+    values=pivot_dicts(values_list)
+    report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-updated")[0]
+    report=report_in_progress.report
+    report.treated_u_5_male_onch = int(values['Treated Under 5 male'])
+    report.treated_u_5_female_onch = int(values['Treated Under 5 female'])
+    report.treated_4_to_14_male_onch = int(values['Treated 5 to 14 male'])
+    report.treated_4_to_14_female_onch = int(values['Treated 5 to 14 female'])
+    report.treated_gt_14_male_onch = int(values['Treated greater than 15 male'])
+    report.treated_gt_14_female_onch = int(values['Treated greater than 15 female'])
+    report.onchocerciasis=int(values['Treated 5 to 14 male'])+int(values['Treated 5 to 14 female'])+int(values['Treated greater than 15 male'])+int(values['Treated greater than 15 female'])
+    report.save()
+    return True
+
+
+
+
 def handle_alb(xform, submission, reporter):
     from .models import ReportProgress
-    values=submission.submission_values().values("attribute__name","value_text")
+    values_list=submission.submission_values().values("attribute__name","value_text")
+    values=pivot_dicts(values_list)
     report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-updated")[0]
     report=report_in_progress.report
-    report.alb = int(values["Alb Usage"])
+    report.alb_used = int(values["alb used"])
+    report.alb_received = int(values["alb received"])
+    report.alb_wasted = int(values["alb wasted"])
+    report.alb_left = int(values["alb received"]) - int(values["alb wasted"]) - int(values["alb used"])
+    #report.lymphatic = F('lymphatic') + int(values["alb_used"])
     report.save()
-
-
     return True
+
 def handle_ivm(xform, submission, reporter):
     from .models import ReportProgress
-    values=submission.submission_values().values("attribute__name","value_text")
+    values_list=submission.submission_values().values("attribute__name","value_text")
+    values=pivot_dicts(values_list)
     report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-updated")[0]
     report=report_in_progress.report
-    report.ivm = int(values["Ivm Usage"])
+    report.ivm_used = int(values["ivm used"])
+    report.ivm_received = int(values["ivm received"])
+    report.ivm_wasted = int(values["ivm wasted"])
+    report.ivm_left = int(values["ivm received"]) - int(values["ivm wasted"]) - int(values["ivm used"])
+    #report.lymphatic = F('lymphatic') + int(values["ivm_used"])
     report.save()
     return True
+
 def handle_pzq(xform, submission, reporter):
     from .models import ReportProgress
-    values=submission.submission_values().values("attribute__name","value_text")
+    values_list=submission.submission_values().values("attribute__name","value_text")
+    values=pivot_dicts(values_list)
     report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-updated")[0]
     report=report_in_progress.report
-    report.pzq = int(values["PZQ Usage"])
+    report.pzq_used = int(values["pzq used"])
+    report.pzq_received = int(values["pzq received"])
+    report.pzq_wasted = int(values["pzq wasted"])
+    report.pzq_left = int(values["pzq received"]) - int(values["pzq wasted"]) - int(values["pzq used"])
+    #report.schistosomiasis = int(values["pzq_used"])
     report.save()
     return True
+
 def handle_mbd(xform, submission, reporter):
     from .models import ReportProgress
-    values=submission.submission_values().values("attribute__name","value_text")
+    values_list=submission.submission_values().values("attribute__name","value_text")
+    values=pivot_dicts(values_list)
     report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-updated")[0]
     report=report_in_progress.report
-    report.mbd = int(values["MBD Usage"])
+    report.mbd_used = int(values["mbd used"])
+    report.mbd_received = int(values["mbd received"])
+    report.mbd_wasted = int(values["mbd wasted"])
+    report.mbd_left = int(values["mbd received"]) - int(values["mbd wasted"]) - int(values["mbd used"])
     report.save()
     return True
-def handle_zitht(xform, submission, reporter):
+
+def handle_ttr(xform, submission, reporter):
     from .models import ReportProgress
-    values=submission.submission_values().values("attribute__name","value_text")
+    values_list=submission.submission_values().values("attribute__name","value_text")
+    values=pivot_dicts(values_list)
     report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-updated")[0]
     report=report_in_progress.report
-    report.ttr = int(values["Tet Usage"])
+    report.ttr_used = int(values["tet used"])
+    report.ttr_wasted = int(values["tet wasted"])
+    report.ttr_received = int(values["tet received"])
+    report.ttr_left = int(values["ttr received"]) - int(values["ttr wasted"]) - int(values["ttr used"])
+    #report.trachoma = F('trachoma') + int(values["tet_used"])
     report.save()
     return True
+
 def handle_ziths(xform, submission, reporter):
     from .models import ReportProgress
-    values=submission.submission_values().values("attribute__name","value_text")
+    values_list=submission.submission_values().values("attribute__name","value_text")
+    values=pivot_dicts(values_list)
     report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-updated")[0]
     report=report_in_progress.report
-    report.ziths = int(values["Zith Syrup usage"])
+    report.ziths_used = int(values["ziths used"])
+    report.ziths_received = int(values["ziths received"])
+    report.ziths_wasted = int(values["ziths wasted"])
+    report.ziths_left = int(values["ziths received"]) - int(values["ziths wasted"]) - int(values["ziths used"])
+    #report.trachoma = F('trachoma') + int(values["ziths_used"])
     report.save()
     return True
-def handle_tetra(xform, submission, reporter):
+
+def handle_zitht(xform, submission, reporter):
     from .models import ReportProgress
-    values=submission.submission_values().values("attribute__name","value_text")
+    values_list=submission.submission_values().values("attribute__name","value_text")
+    values=pivot_dicts(values_list)
     report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-updated")[0]
     report=report_in_progress.report
-    report.zitht = int(values["zith Tab Usage"])
+    report.zitht_used = int(values["zitht used"])
+    report.zitht_received = int(values["zitht received"])
+    report.zitht_wasted = int(values["zitht wasted"])
+    report.zitht_left = int(values["zitht received"]) - int(values["zitht wasted"]) - int(values["zitht used"])
+    #report.trachoma = F('trachoma') + int(values["zitht_used"])
     report.save()
     return True
 
 
 keyword_handlers={
 
-    "par":handle_parish,
-"vlg":handle_villages_targeted,
-"sch":handle_schools_targeted,
-"agg":handle_treated,
-"pop":handle_pop,
-"alb":handle_alb,
-"ivm":handle_ivm,
-"pzq":handle_pzq,
-"mbd":handle_mbd,
-"ziths":handle_ziths,
-"zitht":handle_zitht,
-    "ttr":handle_tetra
+            "par":handle_parish,
+            "vlg":handle_villages_targeted,
+            "sch":handle_schools_targeted,
+            "agg":handle_treated,
+            "pop":handle_pop,
+            "alb":handle_alb,
+            "ivm":handle_ivm,
+            "pzq":handle_pzq,
+            "mbd":handle_mbd,
+            "ziths":handle_ziths,
+            "zitht":handle_zitht,
+            "ttr":handle_ttr,
+            'fil':handle_treated_fil,
+            'trac':handle_treated_trac,
+            'lyf':handle_treated_lyf,
+            'hel':handle_treated_hel,
+            'schi':handle_treated_schi,
+            'onch':handle_treated_onch,
+            'pfil':handle_pop_fil,
+            'ptrac':handle_pop_trac,
+            'plyf':handle_pop_lyf,
+            'phel':handle_pop_hel,
+            'pschi':handle_pop_schi,
+            'ponch':handle_pop_onch
 
-
-
-
-
-
-}
+            }
 
 
 
 
 @receiver(xform_received)
 def handle_submission(sender, **kwargs):
+
     from rapidsms_xforms.models import xform_received,XFormReport
     from .models import ReportProgress,Reporter,NTDReport
     xform = kwargs['xform']
@@ -216,7 +475,7 @@ def handle_submission(sender, **kwargs):
     submission = kwargs['submission']
     role=Group.objects.get(name="Ntds")
     # manually check restrict to
-
+    #import ipdb;ipdb.set_trace()
 
 
     if submission.has_errors:
@@ -246,19 +505,15 @@ def handle_submission(sender, **kwargs):
 
 
     else:
-        report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-created")[0]
+        report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-created")
         if not report_in_progress.exists():
             submission.response = "Please tell us what POW you are reporting for before submitting data."
             submission.has_errors = True
             submission.save()
             return
 
-
-
-
-
     if xform.keyword in  NTD_KEYWORDS:
-        keyword_handlers["xform.keyword"](xform, submission, health_provider)
+        keyword_handlers[xform.keyword](xform, submission, health_provider)
 
         value_list = []
 

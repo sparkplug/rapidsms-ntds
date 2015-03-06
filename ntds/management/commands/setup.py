@@ -128,18 +128,77 @@ class Command(BaseCommand):
 
 
 
-        treated_by_age,_ = XForm.on_site.get_or_create(name='ntd_treated_by_age', keyword='agg', owner=user, command_prefix=None, separator = '.',
+        onch_treated_by_age,_ = XForm.on_site.get_or_create(name='onch_treated_by_age', keyword='onch', owner=user, command_prefix=None, separator = '.',
                                                             site=Site.objects.get_current(), response='Thanks for your report')
 
-        f1,_ = treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated Less Than 6 Months male', command='trd_less_6month_male', order=0)
-        f1,_ = treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated Less Than 6 Months female', command='trd_less_6month_female', order=1)
-        f1,_ = treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated 6 Months to 4 years male', command='trd_6_to_4years_male', order=2)
-        f1,_ = treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated 6 Months to 4 years female', command='trd_6_to_4years_female', order=3)
-        f1,_ = treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated 5 to 14 male', command='trd_5_to_14_male', order=4)
-        f1,_ = treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated 5 to 14 female', command='trd_5_to_14_female', order=5)
-        f1,_ = treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated greater than 15 male', command='trd_greater_15_male', order=6)
-        f1,_ = treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated greater than 15 female', command='trd_greater_15_female', order=7)
+        f1,_ = onch_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated Under 5 male', command='trd_u_5_male', order=1)
+        f1,_ = onch_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated Under 5 female', command='trd_u_5_female', order=2)
 
+
+        f1,_ = onch_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated 5 to 14 male', command='trd_5_to_14_male', order=4)
+        f1,_ = onch_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated 5 to 14 female', command='trd_5_to_14_female', order=5)
+        f1,_ = onch_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated greater than 15 male', command='trd_greater_15_male', order=6)
+        f1,_ = onch_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated greater than 15 female', command='trd_greater_15_female', order=7)
+
+
+        schi_treated_by_age,_ = XForm.on_site.get_or_create(name='schi_treated_by_age', keyword='schi', owner=user, command_prefix=None, separator = '.',
+                                                       site=Site.objects.get_current(), response='Thanks for your report')
+
+
+        f1,_ = schi_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated Under 5 male', command='trd_u_5_male', order=1)
+        f1,_ = schi_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated Under 5 female', command='trd_u_5_female', order=2)
+        f1,_ = schi_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated 5 to 14 male', command='trd_5_to_14_male', order=4)
+        f1,_ = schi_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated 5 to 14 female', command='trd_5_to_14_female', order=5)
+        f1,_ = schi_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated greater than 15 male', command='trd_greater_15_male', order=6)
+        f1,_ = schi_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated greater than 15 female', command='trd_greater_15_female', order=7)
+
+        lf_treated_by_age,_ = XForm.on_site.get_or_create(name='lf_treated_by_age', keyword='lyf', owner=user, command_prefix=None, separator = '.',
+                                                       site=Site.objects.get_current(), response='Thanks for your report')
+
+
+        f1,_ = lf_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated Under 5 male', command='trd_u_5_male', order=1)
+        f1,_ = lf_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated Under 5 female', command='trd_u_5_female', order=2)
+        f1,_ = lf_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated 5 to 14 male', command='trd_5_to_14_male', order=4)
+        f1,_ = lf_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated 5 to 14 female', command='trd_5_to_14_female', order=5)
+        f1,_ = lf_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated greater than 15 male', command='trd_greater_15_male', order=6)
+        f1,_ = lf_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated greater than 15 female', command='trd_greater_15_female', order=7)
+
+
+        fil_treated_by_age,_ = XForm.on_site.get_or_create(name='fil_treated_by_age', keyword='fil', owner=user, command_prefix=None, separator = '.',
+                                                          site=Site.objects.get_current(), response='Thanks for your report')
+        f1,_ = fil_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated Under 5 male', command='trd_u_5_male', order=1)
+        f1,_ = fil_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated Under 5 female', command='trd_u_5_female', order=2)
+
+        f1,_ = fil_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated 5 to 14 male', command='trd_5_to_14_male', order=4)
+        f1,_ = fil_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated 5 to 14 female', command='trd_5_to_14_female', order=5)
+        f1,_ = fil_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated greater than 15 male', command='trd_greater_15_male', order=6)
+        f1,_ = fil_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated greater than 15 female', command='trd_greater_15_female', order=7)
+
+
+        trac_treated_by_age,_ = XForm.on_site.get_or_create(name='trac_treated_by_age', keyword='trac', owner=user, command_prefix=None, separator = '.',
+                                                           site=Site.objects.get_current(), response='Thanks for your report')
+
+        trac,_ = trac_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated Less Than 6 Months male', command='trd_less_6month_male', order=0)
+        trac,_ = trac_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated Less Than 6 Months female', command='trd_less_6month_female', order=1)
+        trac,_ = trac_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated 6 Months to 4 years male', command='trd_6_to_4years_male', order=2)
+        trac,_ = trac_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated 6 Months to 4 years female', command='trd_6_to_4years_female', order=3)
+        trac,_ = trac_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated 5 to 14 male', command='trd_5_to_14_male', order=4)
+        trac,_ = trac_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated 5 to 14 female', command='trd_5_to_14_female', order=5)
+        trac,_ = trac_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated greater than 15 male', command='trd_greater_15_male', order=6)
+        trac,_ = trac_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated greater than 15 female', command='trd_greater_15_female', order=7)
+
+
+
+        hel_treated_by_age,_ = XForm.on_site.get_or_create(name='hel_treated_by_age', keyword='hel', owner=user, command_prefix=None, separator = '.',
+                                                            site=Site.objects.get_current(), response='Thanks for your report')
+
+        f1,_ = hel_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated Under 5 male', command='trd_u_5_male', order=1)
+        f1,_ = hel_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated Under 5 female', command='trd_u_5_female', order=2)
+
+        hel,_ = hel_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated 5 to 14 male', command='trd_5_to_14_male', order=4)
+        hel,_ = hel_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated 5 to 14 female', command='trd_5_to_14_female', order=5)
+        hel,_ = hel_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated greater than 15 male', command='trd_greater_15_male', order=6)
+        hel,_ = hel_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated greater than 15 female', command='trd_greater_15_female', order=7)
 
         village_population_by_age,_ = XForm.on_site.get_or_create(name='ntd_village_pop_by_age', keyword='pop', owner=user, command_prefix=None, separator = '.',
                                                                        site=Site.objects.get_current(), response='Thanks for your report')
@@ -148,10 +207,89 @@ class Command(BaseCommand):
         f1,_ = village_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop Less Than 6 Months female', command='pop_less_6month_female', order=1)
         f1,_ = village_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop 6 Months to 4 years male', command='pop_6_to_4years_male', order=2)
         f1,_ = village_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop 6 Months to 4 years female', command='pop_6_to_4years_female', order=3)
+
         f1,_ = village_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop 5 to 14 male', command='pop_5_to_14_male', order=4)
         f1,_ = village_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop 5 to 14 female', command='pop_5_to_14_female', order=5)
         f1,_ = village_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop greater than 15 male', command='pop_greater_15_male', order=6)
         f1,_ = village_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop greater than 15 female', command='pop_greater_15_female', order=7)
+
+
+        fil_eligible__population_by_age,_ = XForm.on_site.get_or_create(name='fil_elig_population', keyword='pfil', owner=user, command_prefix=None, separator = '.',
+                                                                  site=Site.objects.get_current(), response='Thanks for your report')
+        f1,_ = fil_eligible__population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop Under 5 male', command='pop_u_5_male', order=1)
+        f1,_ = fil_eligible__population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop Under 5 female', command='pop_u_5_female', order=2)
+
+
+        f1,_ = fil_eligible__population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop 5 to 14 male', command='pop_5_to_14_male', order=4)
+        f1,_ = fil_eligible__population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop 5 to 14 female', command='pop_5_to_14_female', order=5)
+        f1,_ = fil_eligible__population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop greater than 15 male', command='pop_greater_15_male', order=6)
+        f1,_ = fil_eligible__population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop greater than 15 female', command='pop_greater_15_female', order=7)
+
+
+        onch_eligible_population_by_age,_ = XForm.on_site.get_or_create(name='onch_elig_population', keyword='ponch', owner=user, command_prefix=None, separator = '.',
+                                                                  site=Site.objects.get_current(), response='Thanks for your report')
+
+        f1,_ = onch_eligible_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop Under 5 male', command='pop_u_5_male', order=1)
+        f1,_ = onch_eligible_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop Under 5 female', command='pop_u_5_female', order=2)
+
+
+        f1,_ = onch_eligible_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop 5 to 14 male', command='pop_5_to_14_male', order=4)
+        f1,_ = onch_eligible_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop 5 to 14 female', command='pop_5_to_14_female', order=5)
+        f1,_ = onch_eligible_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop greater than 15 male', command='pop_greater_15_male', order=6)
+        f1,_ = onch_eligible_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop greater than 15 female', command='pop_greater_15_female', order=7)
+
+
+
+        trac_eligible_population_by_age,_ = XForm.on_site.get_or_create(name='trac_elig_population', keyword='ptrac', owner=user, command_prefix=None, separator = '.',
+                                                                  site=Site.objects.get_current(), response='Thanks for your report')
+
+        f1,_ = trac_eligible_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop Less Than 6 Months male', command='pop_less_6month_male', order=0)
+        f1,_ = trac_eligible_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop Less Than 6 Months female', command='pop_less_6month_female', order=1)
+        f1,_ = trac_eligible_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop 6 Months to 4 years male', command='pop_6_to_4years_male', order=2)
+        f1,_ = trac_eligible_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop 6 Months to 4 years female', command='pop_6_to_4years_female', order=3)
+        f1,_ = trac_eligible_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop 5 to 14 male', command='pop_5_to_14_male', order=4)
+        f1,_ = trac_eligible_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop 5 to 14 female', command='pop_5_to_14_female', order=5)
+        f1,_ = trac_eligible_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop greater than 15 male', command='pop_greater_15_male', order=6)
+        f1,_ = trac_eligible_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop greater than 15 female', command='pop_greater_15_female', order=7)
+
+
+        lyf_eligible_population_by_age,_ = XForm.on_site.get_or_create(name='lyf_elig_population', keyword='plyf', owner=user, command_prefix=None, separator = '.',
+                                                                  site=Site.objects.get_current(), response='Thanks for your report')
+        f1,_ = lyf_eligible_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop Under 5 male', command='pop_u_5_male', order=1)
+        f1,_ = lyf_eligible_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop Under 5 female', command='pop_u_5_female', order=2)
+
+
+        f1,_ = lyf_eligible_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop 5 to 14 male', command='pop_5_to_14_male', order=4)
+        f1,_ = lyf_eligible_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop 5 to 14 female', command='pop_5_to_14_female', order=5)
+        f1,_ = lyf_eligible_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop greater than 15 male', command='pop_greater_15_male', order=6)
+        f1,_ = lyf_eligible_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop greater than 15 female', command='pop_greater_15_female', order=7)
+
+
+        hel_eligible_population_by_age,_ = XForm.on_site.get_or_create(name='helm_el_population', keyword='phel', owner=user, command_prefix=None, separator = '.',
+                                                                  site=Site.objects.get_current(), response='Thanks for your report')
+        f1,_ = hel_eligible_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop Under 5 male', command='pop_u_5_male', order=1)
+        f1,_ = hel_eligible_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop Under 5 female', command='pop_u_5_female', order=2)
+
+
+        f1,_ = hel_eligible_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop 5 to 14 male', command='pop_5_to_14_male', order=4)
+        f1,_ = hel_eligible_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop 5 to 14 female', command='pop_5_to_14_female', order=5)
+        f1,_ = hel_eligible_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop greater than 15 male', command='pop_greater_15_male', order=6)
+        f1,_ = hel_eligible_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop greater than 15 female', command='pop_greater_15_female', order=7)
+
+
+
+        pschi_eligible_population_by_age,_ = XForm.on_site.get_or_create(name='schi_elig_pop', keyword='pschi', owner=user, command_prefix=None, separator = '.',
+                                                                  site=Site.objects.get_current(), response='Thanks for your report')
+        f1,_ = pschi_eligible_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop Under 5 male', command='pop_u_5_male', order=1)
+        f1,_ = pschi_eligible_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop Under 5 female', command='pop_u_5_female', order=2)
+
+
+        f1,_ = pschi_eligible_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop 5 to 14 male', command='pop_5_to_14_male', order=4)
+        f1,_ = pschi_eligible_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop 5 to 14 female', command='pop_5_to_14_female', order=5)
+        f1,_ = pschi_eligible_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop greater than 15 male', command='pop_greater_15_male', order=6)
+        f1,_ = pschi_eligible_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop greater than 15 female', command='pop_greater_15_female', order=7)
+
+
 
 
 
@@ -162,45 +300,55 @@ class Command(BaseCommand):
         alb_usage,_ = XForm.on_site.get_or_create(name='Alb Usage', keyword='alb', owner=user, command_prefix=None, separator = '.',
                                                        site=Site.objects.get_current(), response='Thanks for your report')
 
-        f1,_ = alb_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='alb_used', command='used', order=0)
-        f1,_ = alb_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='alb_left', command='left', order=1)
+        f1,_ = alb_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='alb received', command='received', order=0)
+        f1,_ = alb_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='alb used', command='used', order=1)
+        f1,_ = alb_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='alb wasted', command='wasted', order=2)
 
 
         ivm_usage,_ = XForm.on_site.get_or_create(name='Ivm Usage', keyword='ivm', owner=user, command_prefix=None, separator = '.',
                                                        site=Site.objects.get_current(), response='Thanks for your report')
-        f1,_ = ivm_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='ivm_used', command='used', order=0)
-        f1,_ = ivm_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='ivm_left', command='left', order=1)
+        f1,_ = ivm_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='ivm received', command='received', order=0)
+        f1,_ = ivm_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='ivm used', command='used', order=1)
+        f1,_ = ivm_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='ivm wasted', command='wasted', order=2)
 
         pzq_usage,_ = XForm.on_site.get_or_create(name='PZQ Usage', keyword='pzq', owner=user, command_prefix=None, separator = '.',
                                                        site=Site.objects.get_current(), response='Thanks for your report')
 
-        f1,_ = pzq_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='pzq_used', command='used', order=0)
-        f1,_ = pzq_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='pzq_left', command='left', order=1)
+        f1,_ = pzq_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='pzq received', command='received', order=0)
+        f1,_ = pzq_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='pzq used', command='used', order=1)
+        f1,_ = pzq_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='pzq wasted', command='wasted', order=2)
 
         mbd_usage,_ = XForm.on_site.get_or_create(name='MBD Usage', keyword='mbd', owner=user, command_prefix=None, separator = '.',
                                                        site=Site.objects.get_current(), response='Thanks for your report')
-        f1,_ = mbd_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='mbd_used', command='used', order=0)
-        f1,_ = mbd_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='mbd_left', command='left', order=1)
+        f1,_ = mbd_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='mbd received', command='received', order=0)
+        f1,_ = mbd_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='mbd used', command='used', order=1)
+        f1,_ = mbd_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='mbd wasted', command='wasted', order=2)
 
         tet_usage,_ = XForm.on_site.get_or_create(name='Tet Usage', keyword='ttr', owner=user, command_prefix=None, separator = '.',
                                                        site=Site.objects.get_current(), response='Thanks for your report')
 
-        f1,_ = tet_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='tet_used', command='used', order=0)
-        f1,_ = tet_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='tet_left', command='left', order=1)
+        f1,_ = tet_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='tet received', command='received', order=0)
+        f1,_ = tet_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='tet used', command='used', order=1)
+        f1,_ = tet_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='tet wasted', command='wasted', order=2)
 
 
         ziths_usage,_ = XForm.on_site.get_or_create(name='Zith Syrup usage', keyword='ziths', owner=user, command_prefix=None, separator = '.',
                                                          site=Site.objects.get_current(), response='Thanks for your report')
 
-        f1,_ = ziths_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='ziths_used', command='used', order=0)
-        f1,_ = ziths_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='ziths_left', command='left', order=1)
+        f1,_ = ziths_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='ziths received', command='received', order=0)
+        f1,_ = ziths_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='ziths used', command='used', order=1)
+        f1,_ = ziths_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='ziths wasted', command='wasted', order=2)
+
+
+
 
         zitht_usage,_ = XForm.on_site.get_or_create(name='zith Tab Usage', keyword='zitht', owner=user, command_prefix=None, separator = '.',
                                                          site=Site.objects.get_current(), response='Thanks for your report')
 
 
-        f1,_ = zitht_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='zitht_used', command='used', order=0)
-        f1,_ = zitht_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='zitht_left', command='left', order=1)
+        f1,_ = zitht_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='zitht received', command='received', order=0)
+        f1,_ = zitht_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='zitht used', command='used', order=1)
+        f1,_ = zitht_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='zitht wasted', command='wasted', order=2)
 
 
 

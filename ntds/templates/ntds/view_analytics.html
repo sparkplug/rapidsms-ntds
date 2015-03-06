@@ -181,17 +181,17 @@
                     type: 'pie',
                     name: 'Diseases',
                     data: [
-                        ['Lympatic', 45.0],
-                        ['filariasis', 26.8],
+                        ['Lympatic', {{ rep.lympatic__sum }}],
+                        ['filariasis', {{ rep.filariasis__sum }}],
                         {
                             name: 'onchocerciasis',
-                            y: 12.8,
+                            y: {{ rep.onchocerciasis__sum  }},
                             sliced: true,
                             selected: true
                         },
-                        ['chistosomiasis', 8.5],
-                        ['trachoma', 6.2],
-                        ['helminthiasis', 0.7]
+                        ['schistosomiasis', {{ rep.schistosomiasis__sum }}],
+                        ['trachoma', {{ rep.trachoma__sum }}],
+                        ['helminthiasis', {{ rep.helminthiasis__sum }}]
                     ]
                 }]
             });
