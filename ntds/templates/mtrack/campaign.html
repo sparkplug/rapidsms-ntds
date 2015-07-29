@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+{% block stylesheets %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}generic/stylesheets/generic.css"/>
+<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}generic/stylesheets/map.css"/>
+<style type="text/css">
+    .bedlinks li {
+        margin: 0;
+        padding-bottom: 10px;
+        list-style-type: none;
+        font-weight: bold;
+
+    }
+</style>
+{% endblock %}
+{% block javascripts %}
+{{ block.super }}
+<script type="text/javascript" src="{{ MEDIA_URL }}rapidsms/javascripts/jquery-1.3.2.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<!-- <img src="{{ MEDIA_URL }}rapidsms/icons/silk/exclamation.png"/>
+This first dashboard view - with alerts and reports to approve - is currently using test data. You will be notified when your content is available.
+<img src="{{ MEDIA_URL }}rapidsms/icons/silk/exclamation.png"/> -->
+<div class="module">
+    <h2>Campaign</h2>
+    <div id="alerts">
+        <ul class="bedlinks">
+            <li><a href="{% url fhd-stats %}"><h3>FHDs</h3></a> </li>
+            <li><a href="{% url ndts-dashboard %}"><h3>NTDs</h3></a> </li>
+            <li><a href="#"><h3>BEDNETS</h3></a></li>
+            <li><a href="{% url polls %}"><h3>POLLING</h3></a></li>
+            <li><a href="{% url get_poll_responses %}"><h3>Download Poll Responses</h3></a></li>
+            <li><a href="{% url schedule_creator %}"><h3>Reminders/Schedules</h3></a></li>
+
+        </ul>
+    </div>
+</div>
+
+
+
+<div class="clear-hack"></div>
+{% endblock %}

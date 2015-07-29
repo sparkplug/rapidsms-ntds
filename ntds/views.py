@@ -98,12 +98,17 @@ def view_analytics(request):
                                                                                               Sum("trachoma"),
                                                                                               Sum("helminthiasis"))
 
+    try:
+        rep=report_q[0]
+    except IndexError:
+        rep={}
+
     context = {
 
         'bubbles_to_ret': mark_safe(bubbles_to_ret),
         'pdata': mark_safe(pdata),
         'ldata': mark_safe(ldata),
-        'rep': report_q[0]
+        'rep': rep
 
     }
     return render_to_response("ntds/view_analytics.html", context, context_instance=RequestContext(request))

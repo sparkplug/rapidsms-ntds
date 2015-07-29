@@ -185,7 +185,7 @@
                         ['filariasis', {{ rep.filariasis__sum }}],
                         {
                             name: 'onchocerciasis',
-                            y: {{ rep.onchocerciasis__sum  }},
+                            y: {{ rep.onchocerciasis__sum|default:0  }},
                             sliced: true,
                             selected: true
                         },
