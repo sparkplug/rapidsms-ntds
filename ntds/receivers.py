@@ -6,6 +6,8 @@ from rapidsms_xforms.models import xform_received
 import datetime
 from django.contrib.auth.models import  Group
 from django.db.models import F
+from .utils import parse_location
+from .models import Reporter,ReportProgress,NTDReport,NtdLocation
 
 
 
@@ -60,8 +62,6 @@ def generate_report(xform, submission, health_provider):
 
 def default_constraint(xform, submission, health_provider):
     return True
-
-
 
 
 
@@ -137,6 +137,9 @@ def  handle_pop_fil(xform, submission, reporter):
     values_list=submission.submission_values().values("attribute__name","value_text")
     values=pivot_dicts(values_list)
     report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-updated")[0]
+
+
+
     report=report_in_progress.report
     report.pop_u_5_male_fil = int(values['Pop Under 5 male'])
     report.pop_u_5_female_fil = int(values['Pop Under 5 female'])
@@ -151,27 +154,38 @@ def  handle_pop_fil(xform, submission, reporter):
 
 
 
-def handle_treated_fil(xform, submission, reporter):
+def handle_treated_fil(xform, submission, health_provider):
     from .models import ReportProgress
     values_list=submission.submission_values().values("attribute__name","value_text")
     values=pivot_dicts(values_list)
-    report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-updated")[0]
-    report=report_in_progress.report
-    report.treated_u_5_male_fil = int(values['Treated Under 5 male'])
-    report.treated_u_5_female_fil = int(values['Treated Under 5 female'])
-    report.treated_4_to_14_male_fil = int(values['Treated 5 to 14 male'])
-    report.treated_4_to_14_female_fil = int(values['Treated 5 to 14 female'])
-    report.treated_gt_14_male_fil = int(values['Treated greater than 15 male'])
-    report.treated_gt_14_female_fil = int(values['Treated greater than 15 female'])
-    report.filariasis=int(values['Treated 5 to 14 male'])+int(values['Treated 5 to 14 female'])+int(values['Treated greater than 15 male'])+int(values['Treated greater than 15 female'])
-    report.save()
+    reporter=Reporter.objects.get(healthprovider_ptr=health_provider)
+    ntd_location=NtdLocation.objects.filter(code=values["Parish"])
+    if ntd_location.exists():
+        report=NTDReport.objects.create(reporter=reporter)
+        report.parish = ntd_location[0].location
+        report.treated_lt_6_male_trac = int(values['Treated Less Than 6 Months male'])
+        report.treated_lt_6_female_trac = int(values['Treated Less Than 6 Months female'])
+        report.treated_6_to_4_male_trac = int(values['Treated 6 Months to 4 years male'])
+        report.treated_6_to_4_female_trac = int(values['Treated 6 Months to 4 years female'])
+        report.treated_4_to_14_male_trac = int(values['Treated 5 to 14 male'])
+        report.treated_4_to_14_female_trac = int(values['Treated 5 to 14 female'])
+        report.treated_gt_14_male_trac = int(values['Treated greater than 15 male'])
+        report.treated_gt_14_female_trac = int(values['Treated greater than 15 female'])
+        report.trachoma=int(values['Treated 6 Months to 4 years female'])+int(values['Treated 6 Months to 4 years male'])+int(values['Treated Less Than 6 Months male'])+int(values['Treated Less Than 6 Months female'])+int(values['Treated 5 to 14 male'])+int(values['Treated 5 to 14 female'])+int(values['Treated greater than 15 male'])+int(values['Treated greater than 15 female'])
+        report.save()
+    else:
+        submission.response = "Invalid location code"
+        submission.has_errors = True
+        submission.save()
+        return
     return True
 
 
-def  handle_pop_trac(xform, submission, reporter):
+def  handle_pop_trac(xform, submission, health_provider):
     from .models import ReportProgress
     values_list=submission.submission_values().values("attribute__name","value_text")
     values=pivot_dicts(values_list)
+    report=NTDReport.objects.create(reporter=reporter)
     report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-updated")[0]
     report=report_in_progress.report
     report.pop_lt_6_male_trac = int(values['Pop Less Than 6 Months male'])
@@ -185,30 +199,40 @@ def  handle_pop_trac(xform, submission, reporter):
     report.save()
     return True
 
-def handle_treated_trac(xform, submission, reporter):
-    from .models import ReportProgress
+def handle_treated_trac(xform, submission, health_provider):
+    from .models import ReportProgress,NtdLocation
     values_list=submission.submission_values().values("attribute__name","value_text")
+    reporter=Reporter.objects.get(healthprovider_ptr=health_provider)
+
     values=pivot_dicts(values_list)
-    report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-updated")[0]
-    report=report_in_progress.report
-    report.treated_lt_6_male_trac = int(values['Treated Less Than 6 Months male'])
-    report.treated_lt_6_female_trac = int(values['Treated Less Than 6 Months female'])
-    report.treated_6_to_4_male_trac = int(values['Treated 6 Months to 4 years male'])
-    report.treated_6_to_4_female_trac = int(values['Treated 6 Months to 4 years female'])
-    report.treated_4_to_14_male_trac = int(values['Treated 5 to 14 male'])
-    report.treated_4_to_14_female_trac = int(values['Treated 5 to 14 female'])
-    report.treated_gt_14_male_trac = int(values['Treated greater than 15 male'])
-    report.treated_gt_14_female_trac = int(values['Treated greater than 15 female'])
-    report.trachoma=int(values['Treated 6 Months to 4 years female'])+int(values['Treated 6 Months to 4 years male'])+int(values['Treated Less Than 6 Months male'])+int(values['Treated Less Than 6 Months female'])+int(values['Treated 5 to 14 male'])+int(values['Treated 5 to 14 female'])+int(values['Treated greater than 15 male'])+int(values['Treated greater than 15 female'])
-    report.save()
+    ntd_location=NtdLocation.objects.filter(code=values["Parish"])
+    if ntd_location.exists():
+
+        report=NTDReport.objects.create(reporter=reporter)
+        report.parish = ntd_location[0].location
+        report.treated_lt_6_male_trac = int(values['Treated Less Than 6 Months male'])
+        report.treated_lt_6_female_trac = int(values['Treated Less Than 6 Months female'])
+        report.treated_6_to_4_male_trac = int(values['Treated 6 Months to 4 years male'])
+        report.treated_6_to_4_female_trac = int(values['Treated 6 Months to 4 years female'])
+        report.treated_4_to_14_male_trac = int(values['Treated 5 to 14 male'])
+        report.treated_4_to_14_female_trac = int(values['Treated 5 to 14 female'])
+        report.treated_gt_14_male_trac = int(values['Treated greater than 15 male'])
+        report.treated_gt_14_female_trac = int(values['Treated greater than 15 female'])
+        report.trachoma=int(values['Treated 6 Months to 4 years female'])+int(values['Treated 6 Months to 4 years male'])+int(values['Treated Less Than 6 Months male'])+int(values['Treated Less Than 6 Months female'])+int(values['Treated 5 to 14 male'])+int(values['Treated 5 to 14 female'])+int(values['Treated greater than 15 male'])+int(values['Treated greater than 15 female'])
+        report.save()
+    else:
+        submission.response = "Invalid location code"
+        submission.has_errors = True
+        submission.save()
+        return
     return True
 
-def  handle_pop_lyf(xform, submission, reporter):
-    from .models import ReportProgress
+def  handle_pop_lyf(xform, submission, health_provider):
+    from .models import ReportProgress,NtdLocation
     values_list=submission.submission_values().values("attribute__name","value_text")
     values=pivot_dicts(values_list)
-    report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-updated")[0]
-    report=report_in_progress.report
+    ntd_location=NtdLocation.objects.filter(code=values["Parish"])
+    reporter=Reporter.objects.get(healthprovider_ptr=health_provider)
     report.pop_u_5_male_lyf = int(values['Pop Under 5 male'])
     report.pop_u_5_female_lyf = int(values['Pop Under 5 female'])
     report.pop_4_to_14_male_lyf = int(values['Pop 5 to 14 male'])
@@ -219,20 +243,30 @@ def  handle_pop_lyf(xform, submission, reporter):
     return True
 
 
-def handle_treated_lyf(xform, submission, reporter):
+def handle_treated_lyf(xform, submission, health_provider):
     from .models import ReportProgress
     values_list=submission.submission_values().values("attribute__name","value_text")
     values=pivot_dicts(values_list)
-    report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-updated")[0]
-    report=report_in_progress.report
-    report.treated_u_5_male_lyf = int(values['Treated Under 5 male'])
-    report.treated_u_5_female_lyf = int(values['Treated Under 5 female'])
-    report.treated_4_to_14_male_lyf = int(values['Treated 5 to 14 male'])
-    report.treated_4_to_14_female_lyf = int(values['Treated 5 to 14 female'])
-    report.treated_gt_14_male_lyf = int(values['Treated greater than 15 male'])
-    report.treated_gt_14_female_lyf = int(values['Treated greater than 15 female'])
-    report.lymphatic=int(values['Treated 5 to 14 male'])+int(values['Treated 5 to 14 female'])+int(values['Treated greater than 15 male'])+int(values['Treated greater than 15 female'])
-    report.save()
+    ntd_location=NtdLocation.objects.filter(code=values["Parish"])
+    reporter=Reporter.objects.get(healthprovider_ptr=health_provider)
+    if ntd_location.exists():
+        report=NTDReport.objects.create(reporter=reporter)
+        report.parish = ntd_location[0].location
+        report.treated_lt_6_male_trac = int(values['Treated Less Than 6 Months male'])
+        report.treated_lt_6_female_trac = int(values['Treated Less Than 6 Months female'])
+        report.treated_6_to_4_male_trac = int(values['Treated 6 Months to 4 years male'])
+        report.treated_6_to_4_female_trac = int(values['Treated 6 Months to 4 years female'])
+        report.treated_4_to_14_male_trac = int(values['Treated 5 to 14 male'])
+        report.treated_4_to_14_female_trac = int(values['Treated 5 to 14 female'])
+        report.treated_gt_14_male_trac = int(values['Treated greater than 15 male'])
+        report.treated_gt_14_female_trac = int(values['Treated greater than 15 female'])
+        report.lympatic=int(values['Treated 6 Months to 4 years female'])+int(values['Treated 6 Months to 4 years male'])+int(values['Treated Less Than 6 Months male'])+int(values['Treated Less Than 6 Months female'])+int(values['Treated 5 to 14 male'])+int(values['Treated 5 to 14 female'])+int(values['Treated greater than 15 male'])+int(values['Treated greater than 15 female'])
+        report.save()
+    else:
+        submission.response = "Invalid location code"
+        submission.has_errors = True
+        submission.save()
+        return
     return True
 
 def  handle_pop_hel(xform, submission, reporter):
@@ -250,20 +284,31 @@ def  handle_pop_hel(xform, submission, reporter):
     report.save()
     return True
 
-def handle_treated_hel(xform, submission, reporter):
+def handle_treated_hel(xform, submission, health_provider):
     from .models import ReportProgress
     values_list=submission.submission_values().values("attribute__name","value_text")
     values=pivot_dicts(values_list)
-    report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-updated")[0]
-    report=report_in_progress.report
-    report.treated_u_5_male_hel = int(values['Treated Under 5 male'])
-    report.treated_u_5_female_hel = int(values['Treated Under 5 female'])
-    report.treated_4_to_14_male_hel = int(values['Treated 5 to 14 male'])
-    report.treated_4_to_14_female_hel = int(values['Treated 5 to 14 female'])
-    report.treated_gt_14_male_hel = int(values['Treated greater than 15 male'])
-    report.treated_gt_14_female_hel = int(values['Treated greater than 15 female'])
-    report.helminthiasis=int(values['Treated 5 to 14 male'])+int(values['Treated 5 to 14 female'])+int(values['Treated greater than 15 male'])+int(values['Treated greater than 15 female'])
-    report.save()
+    ntd_location=NtdLocation.objects.filter(code=values["Parish"])
+    reporter=Reporter.objects.get(healthprovider_ptr=health_provider)
+    if ntd_location.exists():
+
+        report=NTDReport.objects.create(reporter=reporter)
+        report.parish = ntd_location[0].location
+        report.treated_lt_6_male_trac = int(values['Treated Less Than 6 Months male'])
+        report.treated_lt_6_female_trac = int(values['Treated Less Than 6 Months female'])
+        report.treated_6_to_4_male_trac = int(values['Treated 6 Months to 4 years male'])
+        report.treated_6_to_4_female_trac = int(values['Treated 6 Months to 4 years female'])
+        report.treated_4_to_14_male_trac = int(values['Treated 5 to 14 male'])
+        report.treated_4_to_14_female_trac = int(values['Treated 5 to 14 female'])
+        report.treated_gt_14_male_trac = int(values['Treated greater than 15 male'])
+        report.treated_gt_14_female_trac = int(values['Treated greater than 15 female'])
+        report.helminthiasis=int(values['Treated 6 Months to 4 years female'])+int(values['Treated 6 Months to 4 years male'])+int(values['Treated Less Than 6 Months male'])+int(values['Treated Less Than 6 Months female'])+int(values['Treated 5 to 14 male'])+int(values['Treated 5 to 14 female'])+int(values['Treated greater than 15 male'])+int(values['Treated greater than 15 female'])
+        report.save()
+    else:
+        submission.response = "Invalid location code"
+        submission.has_errors = True
+        submission.save()
+        return
     return True
 
 def  handle_pop_schi(xform, submission, reporter):
@@ -282,20 +327,33 @@ def  handle_pop_schi(xform, submission, reporter):
     report.save()
     return True
 
-def handle_treated_schi(xform, submission, reporter):
+def handle_treated_schi(xform, submission, health_provider):
     from .models import ReportProgress
     values_list=submission.submission_values().values("attribute__name","value_text")
     values=pivot_dicts(values_list)
-    report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-updated")[0]
-    report=report_in_progress.report
-    report.treated_u_5_male_schi = int(values['Treated Under 5 male'])
-    report.treated_u_5_female_schi = int(values['Treated Under 5 female'])
-    report.treated_4_to_14_male_schi = int(values['Treated 5 to 14 male'])
-    report.treated_4_to_14_female_schi = int(values['Treated 5 to 14 female'])
-    report.treated_gt_14_male_schi = int(values['Treated greater than 15 male'])
-    report.treated_gt_14_female_schi = int(values['Treated greater than 15 female'])
-    report.schistosomiasis=int(values['Treated 5 to 14 male'])+int(values['Treated 5 to 14 female'])+int(values['Treated greater than 15 male'])+int(values['Treated greater than 15 female'])
-    report.save()
+    ntd_location=NtdLocation.objects.filter(code=values["Parish"])
+    reporter=Reporter.objects.get(healthprovider_ptr=health_provider)
+    if ntd_location.exists():
+
+        report=NTDReport.objects.create(reporter=reporter)
+        report.parish = ntd_location[0].location
+        report.treated_lt_6_male_trac = int(values['Treated Less Than 6 Months male'])
+        report.treated_lt_6_female_trac = int(values['Treated Less Than 6 Months female'])
+        report.treated_6_to_4_male_trac = int(values['Treated 6 Months to 4 years male'])
+        report.treated_6_to_4_female_trac = int(values['Treated 6 Months to 4 years female'])
+        report.treated_4_to_14_male_trac = int(values['Treated 5 to 14 male'])
+        report.treated_4_to_14_female_trac = int(values['Treated 5 to 14 female'])
+        report.treated_gt_14_male_trac = int(values['Treated greater than 15 male'])
+        report.treated_gt_14_female_trac = int(values['Treated greater than 15 female'])
+        report.schistosomiasis=int(values['Treated 6 Months to 4 years female'])+int(values['Treated 6 Months to 4 years male'])+int(values['Treated Less Than 6 Months male'])+int(values['Treated Less Than 6 Months female'])+int(values['Treated 5 to 14 male'])+int(values['Treated 5 to 14 female'])+int(values['Treated greater than 15 male'])+int(values['Treated greater than 15 female'])
+        report.save()
+    else:
+        submission.response = "Invalid location code"
+        submission.has_errors = True
+        submission.save()
+        return
+
+
     return True
 
 def  handle_pop_onch(xform, submission, reporter):
@@ -314,20 +372,30 @@ def  handle_pop_onch(xform, submission, reporter):
     return True
 
 
-def handle_treated_onch(xform, submission, reporter):
+def handle_treated_onch(xform, submission, health_provider):
     from .models import ReportProgress
     values_list=submission.submission_values().values("attribute__name","value_text")
     values=pivot_dicts(values_list)
-    report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-updated")[0]
-    report=report_in_progress.report
-    report.treated_u_5_male_onch = int(values['Treated Under 5 male'])
-    report.treated_u_5_female_onch = int(values['Treated Under 5 female'])
-    report.treated_4_to_14_male_onch = int(values['Treated 5 to 14 male'])
-    report.treated_4_to_14_female_onch = int(values['Treated 5 to 14 female'])
-    report.treated_gt_14_male_onch = int(values['Treated greater than 15 male'])
-    report.treated_gt_14_female_onch = int(values['Treated greater than 15 female'])
-    report.onchocerciasis=int(values['Treated 5 to 14 male'])+int(values['Treated 5 to 14 female'])+int(values['Treated greater than 15 male'])+int(values['Treated greater than 15 female'])
-    report.save()
+    ntd_location=NtdLocation.objects.filter(code=values["Parish"])
+    reporter=Reporter.objects.get(healthprovider_ptr=health_provider)
+    if ntd_location.exists():
+        report=NTDReport.objects.create(reporter=reporter)
+        report.parish = ntd_location[0].location
+        report.treated_lt_6_male_trac = int(values['Treated Less Than 6 Months male'])
+        report.treated_lt_6_female_trac = int(values['Treated Less Than 6 Months female'])
+        report.treated_6_to_4_male_trac = int(values['Treated 6 Months to 4 years male'])
+        report.treated_6_to_4_female_trac = int(values['Treated 6 Months to 4 years female'])
+        report.treated_4_to_14_male_trac = int(values['Treated 5 to 14 male'])
+        report.treated_4_to_14_female_trac = int(values['Treated 5 to 14 female'])
+        report.treated_gt_14_male_trac = int(values['Treated greater than 15 male'])
+        report.treated_gt_14_female_trac = int(values['Treated greater than 15 female'])
+        report.onchocerciasis=int(values['Treated 6 Months to 4 years female'])+int(values['Treated 6 Months to 4 years male'])+int(values['Treated Less Than 6 Months male'])+int(values['Treated Less Than 6 Months female'])+int(values['Treated 5 to 14 male'])+int(values['Treated 5 to 14 female'])+int(values['Treated greater than 15 male'])+int(values['Treated greater than 15 female'])
+        report.save()
+    else:
+        submission.response = "Invalid location code"
+        submission.has_errors = True
+        submission.save()
+        return
     return True
 
 
@@ -445,18 +513,18 @@ keyword_handlers={
             "ziths":handle_ziths,
             "zitht":handle_zitht,
             "ttr":handle_ttr,
-            'fil':handle_treated_fil,
-            'trac':handle_treated_trac,
-            'lyf':handle_treated_lyf,
+            'st':handle_treated_fil,
+            'tr':handle_treated_trac,
+            'lf':handle_treated_lyf,
             'hel':handle_treated_hel,
-            'schi':handle_treated_schi,
-            'onch':handle_treated_onch,
-            'pfil':handle_pop_fil,
-            'ptrac':handle_pop_trac,
-            'plyf':handle_pop_lyf,
+            'sc':handle_treated_schi,
+            'ov':handle_treated_onch,
+            'pst':handle_pop_fil,
+            'pt':handle_pop_trac,
+            'plf':handle_pop_lyf,
             'phel':handle_pop_hel,
-            'pschi':handle_pop_schi,
-            'ponch':handle_pop_onch
+            'psc':handle_pop_schi,
+            'pov':handle_pop_onch
 
             }
 
@@ -466,7 +534,6 @@ keyword_handlers={
 @receiver(xform_received)
 def handle_submission(sender, **kwargs):
 
-    from rapidsms_xforms.models import xform_received,XFormReport
     from .models import ReportProgress,Reporter,NTDReport
     xform = kwargs['xform']
     if not xform.keyword in NTD_KEYWORDS:
@@ -504,26 +571,20 @@ def handle_submission(sender, **kwargs):
         return handle_parish(xform, submission, health_provider)
 
 
-    else:
-        report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-created")
-        if not report_in_progress.exists():
-            submission.response = "Please tell us what POW you are reporting for before submitting data."
-            submission.has_errors = True
-            submission.save()
-            return
+
 
     if xform.keyword in  NTD_KEYWORDS:
         keyword_handlers[xform.keyword](xform, submission, health_provider)
 
         value_list = []
+        if not submission.has_errors:
+            for v in submission.eav.get_values().order_by('attribute__xformfield__order'):
+                value_list.append("%s %s" % (v.attribute.name, v.value))
+            if len(value_list) > 1:
+                value_list[len(value_list) - 1] = " and %s" % value_list[len(value_list) - 1]
+            health_provider.last_reporting_date = datetime.datetime.now().date()
+            health_provider.save()
 
-        for v in submission.eav.get_values().order_by('attribute__xformfield__order'):
-            value_list.append("%s %s" % (v.attribute.name, v.value))
-        if len(value_list) > 1:
-            value_list[len(value_list) - 1] = " and %s" % value_list[len(value_list) - 1]
-        health_provider.last_reporting_date = datetime.datetime.now().date()
-        health_provider.save()
-
-        submission.response = "You reported %s.If there is an error,please resend." % ','.join(value_list)
-        submission.save()
+            submission.response = "You reported %s.If there is an error,please resend." % ','.join(value_list)
+            submission.save()
         return

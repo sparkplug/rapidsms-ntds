@@ -4,7 +4,6 @@ from django.utils.translation import (ugettext, activate, deactivate)
 from django.conf import settings
 from healthmodels.models.HealthProvider import HealthProvider
 from rapidsms_xforms.models import XForm,XFormReportSubmission
-from .receivers import handle_submission
 
 class OptinWord(models.Model):
     words = models.CharField(max_length=500)
@@ -28,6 +27,7 @@ class Translation(models.Model):
 
 class NTDReport(models.Model):
     reporter = models.ForeignKey("Reporter")
+    parish = models.ForeignKey("NtdLocation")
     xforms = models.ManyToManyField(XForm)
     population = models.IntegerField(max_length=10,default=0,blank=True)
     total_villages = models.IntegerField(max_length=10,default=0,blank=True)
@@ -49,9 +49,10 @@ class NTDReport(models.Model):
     treated_gt_14_male = models.IntegerField(max_length=10,default=0,blank=True)
     treated_gt_14_female = models.IntegerField(max_length=10,default=0,blank=True)
 
-
-    treated_u_5_male_onch = models.IntegerField(max_length=10,default=0,blank=True)
-    treated_u_5_female_onch = models.IntegerField(max_length=10,default=0,blank=True)
+    treated_lt_6_male_onch = models.IntegerField(max_length=10,default=0,blank=True)
+    treated_lt_6_female_onch = models.IntegerField(max_length=10,default=0,blank=True)
+    treated_6_to_4_male_onch = models.IntegerField(max_length=10,default=0,blank=True)
+    treated_6_to_4_female_onch = models.IntegerField(max_length=10,default=0,blank=True)
     treated_4_to_14_male_onch = models.IntegerField(max_length=10,default=0,blank=True)
     treated_4_to_14_female_onch = models.IntegerField(max_length=10,default=0,blank=True)
     treated_gt_14_male_onch = models.IntegerField(max_length=10,default=0,blank=True)
@@ -59,8 +60,10 @@ class NTDReport(models.Model):
 
 
 
-    pop_u_5_male_onch = models.IntegerField(max_length=10,default=0,blank=True)
-    pop_u_5_female_onch = models.IntegerField(max_length=10,default=0,blank=True)
+    pop_lt_6_male_onch = models.IntegerField(max_length=10,default=0,blank=True)
+    pop_lt_6_female_onch = models.IntegerField(max_length=10,default=0,blank=True)
+    pop_6_to_4_male_onch = models.IntegerField(max_length=10,default=0,blank=True)
+    pop_6_to_4_female_onch = models.IntegerField(max_length=10,default=0,blank=True)
     pop_4_to_14_male_onch = models.IntegerField(max_length=10,default=0,blank=True)
     pop_4_to_14_female_onch = models.IntegerField(max_length=10,default=0,blank=True)
     pop_gt_14_male_onch = models.IntegerField(max_length=10,default=0,blank=True)
@@ -68,48 +71,60 @@ class NTDReport(models.Model):
 
 
 
-    treated_u_5_male_schi = models.IntegerField(max_length=10,default=0,blank=True)
-    treated_u_5_female_schi = models.IntegerField(max_length=10,default=0,blank=True)
+    treated_lt_6_male_schi = models.IntegerField(max_length=10,default=0,blank=True)
+    treated_lt_6_female_schi = models.IntegerField(max_length=10,default=0,blank=True)
+    treated_6_to_4_male_schi = models.IntegerField(max_length=10,default=0,blank=True)
+    treated_6_to_4_female_schi = models.IntegerField(max_length=10,default=0,blank=True)
     treated_4_to_14_male_schi = models.IntegerField(max_length=10,default=0,blank=True)
     treated_4_to_14_female_schi = models.IntegerField(max_length=10,default=0,blank=True)
     treated_gt_14_male_schi = models.IntegerField(max_length=10,default=0,blank=True)
     treated_gt_14_female_schi = models.IntegerField(max_length=10,default=0,blank=True)
 
 
-    pop_u_5_male_schi = models.IntegerField(max_length=10,default=0,blank=True)
-    pop_u_5_female_schi = models.IntegerField(max_length=10,default=0,blank=True)
+    pop_lt_6_male_schi = models.IntegerField(max_length=10,default=0,blank=True)
+    pop_lt_6_female_schi = models.IntegerField(max_length=10,default=0,blank=True)
+    pop_6_to_4_male_schi = models.IntegerField(max_length=10,default=0,blank=True)
+    pop_6_to_4_female_schi = models.IntegerField(max_length=10,default=0,blank=True)
     pop_4_to_14_male_schi = models.IntegerField(max_length=10,default=0,blank=True)
     pop_4_to_14_female_schi = models.IntegerField(max_length=10,default=0,blank=True)
     pop_gt_14_male_schi = models.IntegerField(max_length=10,default=0,blank=True)
     pop_gt_14_female_schi = models.IntegerField(max_length=10,default=0,blank=True)
 
 
-    treated_u_5_male_lyf = models.IntegerField(max_length=10,default=0,blank=True)
-    treated_u_5_female_lyf = models.IntegerField(max_length=10,default=0,blank=True)
+    treated_lt_6_male_lyf = models.IntegerField(max_length=10,default=0,blank=True)
+    treated_lt_6_female_lyf = models.IntegerField(max_length=10,default=0,blank=True)
+    treated_6_to_4_male_lyf = models.IntegerField(max_length=10,default=0,blank=True)
+    treated_6_to_4_female_lyf = models.IntegerField(max_length=10,default=0,blank=True)
     treated_4_to_14_male_lyf = models.IntegerField(max_length=10,default=0,blank=True)
     treated_4_to_14_female_lyf = models.IntegerField(max_length=10,default=0,blank=True)
     treated_gt_14_male_lyf = models.IntegerField(max_length=10,default=0,blank=True)
     treated_gt_14_female_lyf = models.IntegerField(max_length=10,default=0,blank=True)
 
 
-    pop_u_5_male_lyf = models.IntegerField(max_length=10,default=0,blank=True)
-    pop_u_5_female_lyf = models.IntegerField(max_length=10,default=0,blank=True)
+    pop_lt_6_male_lyf = models.IntegerField(max_length=10,default=0,blank=True)
+    pop_lt_6_female_lyf = models.IntegerField(max_length=10,default=0,blank=True)
+    pop_6_to_4_male_lyf = models.IntegerField(max_length=10,default=0,blank=True)
+    pop_6_to_4_female_lyf = models.IntegerField(max_length=10,default=0,blank=True)
     pop_4_to_14_male_lyf = models.IntegerField(max_length=10,default=0,blank=True)
     pop_4_to_14_female_lyf = models.IntegerField(max_length=10,default=0,blank=True)
     pop_gt_14_male_lyf = models.IntegerField(max_length=10,default=0,blank=True)
     pop_gt_14_female_lyf = models.IntegerField(max_length=10,default=0,blank=True)
 
 
-    treated_u_5_male_fil = models.IntegerField(max_length=10,default=0,blank=True)
-    treated_u_5_female_fil = models.IntegerField(max_length=10,default=0,blank=True)
+    treated_lt_6_male_fil = models.IntegerField(max_length=10,default=0,blank=True)
+    treated_lt_6_female_fil = models.IntegerField(max_length=10,default=0,blank=True)
+    treated_6_to_4_male_fil = models.IntegerField(max_length=10,default=0,blank=True)
+    treated_6_to_4_female_fil = models.IntegerField(max_length=10,default=0,blank=True)
     treated_4_to_14_male_fil = models.IntegerField(max_length=10,default=0,blank=True)
     treated_4_to_14_female_fil = models.IntegerField(max_length=10,default=0,blank=True)
     treated_gt_14_male_fil = models.IntegerField(max_length=10,default=0,blank=True)
     treated_gt_14_female_fil = models.IntegerField(max_length=10,default=0,blank=True)
 
 
-    pop_u_5_male_fil = models.IntegerField(max_length=10,default=0,blank=True)
-    pop_u_5_female_fil = models.IntegerField(max_length=10,default=0,blank=True)
+    pop_lt_6_male_fil = models.IntegerField(max_length=10,default=0,blank=True)
+    pop_lt_6_female_fil = models.IntegerField(max_length=10,default=0,blank=True)
+    pop_6_to_4_male_fil = models.IntegerField(max_length=10,default=0,blank=True)
+    pop_6_to_4_female_fil = models.IntegerField(max_length=10,default=0,blank=True)
     pop_4_to_14_male_fil = models.IntegerField(max_length=10,default=0,blank=True)
     pop_4_to_14_female_fil = models.IntegerField(max_length=10,default=0,blank=True)
     pop_gt_14_male_fil = models.IntegerField(max_length=10,default=0,blank=True)
@@ -134,18 +149,22 @@ class NTDReport(models.Model):
     pop_gt_14_female_trac = models.IntegerField(max_length=10,default=0,blank=True)
 
 
-    treated_u_5_male_hel = models.IntegerField(max_length=10,default=0,blank=True)
-    treated_u_5_female_hel = models.IntegerField(max_length=10,default=0,blank=True)
+    treated_lt_6_male_hel = models.IntegerField(max_length=10,default=0,blank=True)
+    treated_lt_6_female_hel = models.IntegerField(max_length=10,default=0,blank=True)
+    treated_6_to_4_male_hel = models.IntegerField(max_length=10,default=0,blank=True)
+    treated_6_to_4_female_hel = models.IntegerField(max_length=10,default=0,blank=True)
     treated_4_to_14_male_hel = models.IntegerField(max_length=10,default=0,blank=True)
     treated_4_to_14_female_hel = models.IntegerField(max_length=10,default=0,blank=True)
     treated_gt_14_male_hel = models.IntegerField(max_length=10,default=0,blank=True)
     treated_gt_14_female_hel = models.IntegerField(max_length=10,default=0,blank=True)
 
 
-    pop_u_5_male_hel = models.IntegerField(max_length=10,default=0,blank=True)
-    pop_u_5_female_hel = models.IntegerField(max_length=10,default=0,blank=True)
-    pop_4_to_14_hel = models.IntegerField(max_length=10,default=0,blank=True)
-    pop_4_to_14_hel = models.IntegerField(max_length=10,default=0,blank=True)
+    pop_lt_6_male_hel = models.IntegerField(max_length=10,default=0,blank=True)
+    pop_lt_6_female_hel = models.IntegerField(max_length=10,default=0,blank=True)
+    pop_6_to_4_male_hel = models.IntegerField(max_length=10,default=0,blank=True)
+    pop_6_to_4_female_hel = models.IntegerField(max_length=10,default=0,blank=True)
+    pop_4_to_14_male_hel = models.IntegerField(max_length=10,default=0,blank=True)
+    pop_4_to_14_female_hel = models.IntegerField(max_length=10,default=0,blank=True)
     pop_gt_14_male_hel = models.IntegerField(max_length=10,default=0,blank=True)
     pop_gt_14_female_hel = models.IntegerField(max_length=10,default=0,blank=True)
 
@@ -220,6 +239,11 @@ class ReportProgress(models.Model):
 
 class DiseaseReport(models.Model):
     district = models.ForeignKey(Location)
+
+class NtdLocation(models.Model):
+    location = models.ForeignKey(Location)
+    name = models.CharField(max_length=50)
+    code = models.CharField(max_length=50,unique=True)
 
 
 

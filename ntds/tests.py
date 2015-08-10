@@ -58,23 +58,31 @@ class NTDSTests(TestCase): #pragma: no cover
         self.script = script
         script.sites.add(Site.objects.get_current())
 
+        script,_= Script.objects.get_or_create(
+            slug="ntd_autoreg",enabled=True
+
+
+        )
+        script = script
+        script.sites.add(Site.objects.get_current())
+
         poll1,_=Poll.objects.get_or_create(name='ntds_parish',
-                                  type=Poll.TYPE_TEXT,
-                                  question='What is your Parish?',
-                                  default_response='',
-                                  user=user)
+                                           type=Poll.TYPE_TEXT,
+                                           question='What is your Parish?',
+                                           default_response='',
+                                           user=user)
 
         poll2,_=Poll.objects.get_or_create(name='ntds_subcounty',
-                          type=Poll.TYPE_TEXT,
-                          question='What is your Subcounty?',
-                          default_response='',
-                          user=user)
+                                           type=Poll.TYPE_TEXT,
+                                           question='What is your Subcounty?',
+                                           default_response='',
+                                           user=user)
 
         poll3,_=Poll.objects.get_or_create(name='ntds_district',
-                          type=Poll.TYPE_TEXT,
-                          question='What is your district?',
-                          default_response='',
-                          user=user)
+                                           type=Poll.TYPE_TEXT,
+                                           question='What is your district?',
+                                           default_response='',
+                                           user=user)
         step1,_=ScriptStep.objects.get_or_create(
             script=script,
             message="Welcome to NTDs Mass drug administration program",
@@ -82,7 +90,7 @@ class NTDSTests(TestCase): #pragma: no cover
             rule=ScriptStep.WAIT_MOVEON,
             start_offset=0,
             giveup_offset=0,
-            )
+        )
 
 
         script.steps.add(step1)
@@ -94,7 +102,7 @@ class NTDSTests(TestCase): #pragma: no cover
             rule=ScriptStep.WAIT_MOVEON,
             start_offset=0,
             giveup_offset=8640000,
-            )
+        )
 
         script.steps.add(step2)
 
@@ -105,7 +113,7 @@ class NTDSTests(TestCase): #pragma: no cover
             rule=ScriptStep.WAIT_MOVEON,
             start_offset=0,
             giveup_offset=8640000,
-            )
+        )
 
         script.steps.add(step3)
         step4,_=ScriptStep.objects.get_or_create(
@@ -115,109 +123,108 @@ class NTDSTests(TestCase): #pragma: no cover
             rule=ScriptStep.WAIT_MOVEON,
             start_offset=0,
             giveup_offset=8640000,
-            )
+        )
         script.steps.add(step4)
 
         OptinWord.objects.get_or_create(language="en",words="ntds")
 
-        self.reg_xform,_ = XForm.on_site.get_or_create(name='ntd_parish', keyword='par', owner=self.user, command_prefix=None, separator = '.',
-                                                          site=Site.objects.get_current(), response="Please start sending data for {{ parish }} parish.")
+        reg_xform,_ = XForm.on_site.get_or_create(name='ntd_parish', keyword='par', owner=user, command_prefix=None, separator = '.',
+                                                  site=Site.objects.get_current(), response="Please send the data for  {{ parish }} parish.")
 
 
-        self.parish_field,_ = self.reg_xform.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Reporting Parish', command='parish', order=0)
+        parish_field,_ = reg_xform.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Reporting Parish', command='parish', order=0)
 
-        self.villages_targeted,_ = XForm.on_site.get_or_create(name='ntd_villages_targeted', keyword='vlg', owner=self.user, command_prefix=None, separator = '.',
-                                                               site=Site.objects.get_current(), response='Thanks for your report')
+        villages_targeted,_ = XForm.on_site.get_or_create(name='ntd_villages_targeted', keyword='vlg', owner=user, command_prefix=None, separator = '.',
+                                                          site=Site.objects.get_current(), response='Thanks for your report')
 
-        self.vlg_no_field,_ = self.villages_targeted.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Vilages in Parish', command='vlg_no', order=0)
-        self.vlg_tgt_field,_ = self.villages_targeted.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Vilages Targeted', command='vlg_tgt', order=1)
-        self.vlg_trd_field,_ = self.villages_targeted.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Vilages Treated', command='vlg_trd', order=2)
-        self.vlg_incpt_field,_ = self.villages_targeted.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Vilages Incomplete', command='vlg_incpt', order=3)
-
-
-        self.villages_targeted,_ = XForm.on_site.get_or_create(name='ntd_schools_targeted', keyword='sch', owner=self.user, command_prefix=None, separator = '.',
-                                                               site=Site.objects.get_current(), response='Thanks for your report')
-
-        self.sch_no_field,_ = self.villages_targeted.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Schools in Parish', command='sch_no', order=0)
-        self.sch_tgt_field,_ = self.villages_targeted.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Schools Targeted', command='sch_tgt', order=1)
-        self.sch_trd_field,_ = self.villages_targeted.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Schools Treated', command='sch_trd', order=2)
-        f1,_ = self.villages_targeted.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Schools Incomplete', command='sch_incpt', order=3)
+        vlg_no_field,_ = villages_targeted.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Vilages in Parish', command='vlg_no', order=0)
+        vlg_tgt_field,_ = villages_targeted.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Vilages Targeted', command='vlg_tgt', order=1)
+        vlg_trd_field,_ = villages_targeted.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Vilages Treated', command='vlg_trd', order=2)
+        vlg_incpt_field,_ = villages_targeted.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Vilages Incomplete', command='vlg_incpt', order=3)
 
 
-
-        self.treated_by_age,_ = XForm.on_site.get_or_create(name='ntd_treated_by_age', keyword='agg', owner=self.user, command_prefix=None, separator = '.',
-                                                               site=Site.objects.get_current(), response='Thanks for your report')
-
-        f1,_ = self.treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated Less Than 6 Months male', command='trd_less_6month_male', order=0)
-        f1,_ = self.treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated Less Than 6 Months female', command='trd_less_6month_female', order=1)
-        f1,_ = self.treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated 6 Months to 4 years male', command='trd_6_to_4years_male', order=2)
-        f1,_ = self.treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated 6 Months to 4 years female', command='trd_6_to_4years_female', order=3)
-        f1,_ = self.treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated 5 to 14 male', command='trd_5_to_14_male', order=4)
-        f1,_ = self.treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated 5 to 14 female', command='trd_5_to_14_female', order=5)
-        f1,_ = self.treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated greater than 15 male', command='trd_greater_15_male', order=6)
-        f1,_ = self.treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated greater than 15 female', command='trd_greater_15_female', order=7)
-
-
-        self.village_population_by_age,_ = XForm.on_site.get_or_create(name='ntd_village_pop_by_age', keyword='pop', owner=self.user, command_prefix=None, separator = '.',
-                                                            site=Site.objects.get_current(), response='Thanks for your report')
-
-        f1,_ = self.village_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop Less Than 6 Months male', command='pop_less_6month_male', order=0)
-        f1,_ = self.village_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop Less Than 6 Months female', command='pop_less_6month_female', order=1)
-        f1,_ = self.village_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop 6 Months to 4 years male', command='pop_6_to_4years_male', order=2)
-        f1,_ = self.village_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop 6 Months to 4 years female', command='pop_6_to_4years_female', order=3)
-        f1,_ = self.village_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop 5 to 14 male', command='pop_5_to_14_male', order=4)
-        f1,_ = self.village_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop 5 to 14 female', command='pop_5_to_14_female', order=5)
-        f1,_ = self.village_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop greater than 15 male', command='pop_greater_15_male', order=6)
-        f1,_ = self.village_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop greater than 15 female', command='pop_greater_15_female', order=7)
-
-
-
-
-
-
-
-        self.alb_usage,_ = XForm.on_site.get_or_create(name='alb_usage', keyword='alb', owner=self.user, command_prefix=None, separator = '.',
-                                                                       site=Site.objects.get_current(), response='Thanks for your report')
-
-        f1,_ = self.alb_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='alb_used', command='used', order=0)
-        f1,_ = self.alb_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='alb_left', command='left', order=1)
-
-
-        self.ivm_usage,_ = XForm.on_site.get_or_create(name='ivm_usage', keyword='ivm', owner=self.user, command_prefix=None, separator = '.',
-                                                       site=Site.objects.get_current(), response='Thanks for your report')
-
-        f1,_ = self.ivm_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='ivm_used', command='used', order=0)
-        f1,_ = self.ivm_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='ivm_left', command='left', order=1)
-
-        self.pzq_usage,_ = XForm.on_site.get_or_create(name='pzq_usage', keyword='pzq', owner=self.user, command_prefix=None, separator = '.',
-                                                       site=Site.objects.get_current(), response='Thanks for your report')
-
-        f1,_ = self.pzq_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='pzq_used', command='used', order=0)
-        f1,_ = self.pzq_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='pzq_left', command='left', order=1)
-
-        self.mbd_usage,_ = XForm.on_site.get_or_create(name='mbd_usage', keyword='mbd', owner=self.user, command_prefix=None, separator = '.',
-                                                       site=Site.objects.get_current(), response='Thanks for your report')
-
-        f1,_ = self.mbd_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='mbd_used', command='used', order=0)
-        f1,_ = self.mbd_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='mbd_left', command='left', order=1)
-
-        self.tet_usage,_ = XForm.on_site.get_or_create(name='tet_usage', keyword='tet', owner=self.user, command_prefix=None, separator = '.',
-                                                       site=Site.objects.get_current(), response='Thanks for your report')
-
-        f1,_ = self.tet_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='tet_used', command='used', order=0)
-        f1,_ = self.tet_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='tet_left', command='left', order=1)
-
-        self.ziths_usage,_ = XForm.on_site.get_or_create(name='ziths_usage', keyword='ziths', owner=self.user, command_prefix=None, separator = '.',
-                                                        site=Site.objects.get_current(), response='Thanks for your report')
-
-        f1,_ = self.ziths_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='ziths_used', command='used', order=0)
-        f1,_ = self.ziths_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='ziths_left', command='left', order=1)
-
-        self.zitht_usage,_ = XForm.on_site.get_or_create(name='zitht_usage', keyword='zitht', owner=self.user, command_prefix=None, separator = '.',
+        schools_targeted,_ = XForm.on_site.get_or_create(name='ntd_schools_targeted', keyword='sch', owner=user, command_prefix=None, separator = '.',
                                                          site=Site.objects.get_current(), response='Thanks for your report')
 
-        f1,_ = self.zitht_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='zitht_used', command='used', order=0)
-        f1,_ = self.zitht_usage.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='zitht_left', command='left', order=1)
+        sch_no_field,_ = schools_targeted.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Schools in Parish', command='sch_no', order=0)
+        sch_tgt_field,_ = schools_targeted.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Schools Targeted', command='sch_tgt', order=1)
+        sch_trd_field,_ = schools_targeted.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Schools Treated', command='sch_trd', order=2)
+        f1,_ = schools_targeted.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Schools Incomplete', command='sch_incpt', order=3)
+
+
+
+        onch_treated_by_age,_ = XForm.on_site.get_or_create(name='onch_treated_by_age', keyword='ov', owner=user, command_prefix=None, separator = '.',
+                                                            site=Site.objects.get_current(), response='Thanks for your report')
+
+        onch,_ = onch_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Parish', command='parish_code', order=0)
+        onch,_ = onch_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='No of communities and schools', command='no_of_schools', order=1)
+        onch,_ = onch_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated Less Than 6 Months male', command='trd_less_6month_male', order=2)
+        onch,_ = onch_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated Less Than 6 Months female', command='trd_less_6month_female', order=3)
+        onch,_ = onch_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated 6 Months to 4 years male', command='trd_6_to_4years_male', order=4)
+        onch,_ = onch_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated 6 Months to 4 years female', command='trd_6_to_4years_female', order=5)
+        onch,_ = onch_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated 5 to 14 male', command='trd_5_to_14_male', order=6)
+        onch,_ = onch_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated 5 to 14 female', command='trd_5_to_14_female', order=7)
+        onch,_ = onch_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated greater than 15 male', command='trd_greater_15_male', order=8)
+        onch,_ = onch_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated greater than 15 female', command='trd_greater_15_female', order=9)
+
+
+        schi_treated_by_age,_ = XForm.on_site.get_or_create(name='schi_treated_by_age', keyword='st', owner=user, command_prefix=None, separator = '.',
+                                                            site=Site.objects.get_current(), response='Thanks for your report')
+
+
+        fi,_ = schi_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Parish', command='parish_code', order=0)
+        fi,_ = schi_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='No of communities and schools', command='no_of_schools', order=1)
+        fi,_ = schi_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated Less Than 6 Months male', command='trd_less_6month_male', order=2)
+        fi,_ = schi_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated Less Than 6 Months female', command='trd_less_6month_female', order=3)
+        fi,_ = schi_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated 6 Months to 4 years male', command='trd_6_to_4years_male', order=4)
+        fi,_ = schi_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated 6 Months to 4 years female', command='trd_6_to_4years_female', order=5)
+        fi,_ = schi_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated 5 to 14 male', command='trd_5_to_14_male', order=6)
+        fi,_ = schi_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated 5 to 14 female', command='trd_5_to_14_female', order=7)
+        fi,_ = schi_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated greater than 15 male', command='trd_greater_15_male', order=8)
+        fi,_ = schi_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated greater than 15 female', command='trd_greater_15_female', order=9)
+
+        lf_treated_by_age,_ = XForm.on_site.get_or_create(name='lf_treated_by_age', keyword='lf', owner=user, command_prefix=None, separator = '.',
+                                                          site=Site.objects.get_current(), response='Thanks for your report')
+
+        fi,_ = lf_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Parish', command='parish_code', order=0)
+        fi,_ = lf_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='No of communities and schools', command='no_of_schools', order=1)
+        fi,_ = lf_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated Less Than 6 Months male', command='trd_less_6month_male', order=2)
+        fi,_ = lf_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated Less Than 6 Months female', command='trd_less_6month_female', order=3)
+        fi,_ = lf_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated 6 Months to 4 years male', command='trd_6_to_4years_male', order=4)
+        fi,_ = lf_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated 6 Months to 4 years female', command='trd_6_to_4years_female', order=5)
+        fi,_ = lf_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated 5 to 14 male', command='trd_5_to_14_male', order=6)
+        fi,_ = lf_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated 5 to 14 female', command='trd_5_to_14_female', order=7)
+        fi,_ = lf_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated greater than 15 male', command='trd_greater_15_male', order=8)
+        fi,_ = lf_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated greater than 15 female', command='trd_greater_15_female', order=9)
+
+
+        fil_treated_by_age,_ = XForm.on_site.get_or_create(name='fil_treated_by_age', keyword='sc', owner=user, command_prefix=None, separator = '.',
+                                                           site=Site.objects.get_current(), response='Thanks for your report')
+        fi,_ = fil_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Parish', command='parish_code', order=0)
+        fi,_ = fil_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='No of communities and schools', command='no_of_schools', order=1)
+        fi,_ = fil_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated Less Than 6 Months male', command='trd_less_6month_male', order=2)
+        fi,_ = fil_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated Less Than 6 Months female', command='trd_less_6month_female', order=3)
+        fi,_ = fil_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated 6 Months to 4 years male', command='trd_6_to_4years_male', order=4)
+        fi,_ = fil_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated 6 Months to 4 years female', command='trd_6_to_4years_female', order=5)
+        fi,_ = fil_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated 5 to 14 male', command='trd_5_to_14_male', order=6)
+        fi,_ = fil_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated 5 to 14 female', command='trd_5_to_14_female', order=7)
+        fi,_ = fil_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated greater than 15 male', command='trd_greater_15_male', order=8)
+        fi,_ = fil_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated greater than 15 female', command='trd_greater_15_female', order=9)
+
+
+        trac_treated_by_age,_ = XForm.on_site.get_or_create(name='trac_treated_by_age', keyword='tr', owner=user, command_prefix=None, separator = '.',
+                                                            site=Site.objects.get_current(), response='Thanks for your report')
+        f1,_ = trac_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Parish', command='parish_code', order=0)
+        f1,_ = trac_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='No of communities and schools', command='no_of_schools', order=1)
+        trac,_ = trac_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated Less Than 6 Months male', command='trd_less_6month_male', order=2)
+        trac,_ = trac_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated Less Than 6 Months female', command='trd_less_6month_female', order=3)
+        trac,_ = trac_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated 6 Months to 4 years male', command='trd_6_to_4years_male', order=4)
+        trac,_ = trac_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated 6 Months to 4 years female', command='trd_6_to_4years_female', order=5)
+        trac,_ = trac_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated 5 to 14 male', command='trd_5_to_14_male', order=6)
+        trac,_ = trac_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated 5 to 14 female', command='trd_5_to_14_female', order=7)
+        trac,_ = trac_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated greater than 15 male', command='trd_greater_15_male', order=8)
+        trac,_ = trac_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated greater than 15 female', command='trd_greater_15_female', order=9)
+
 
 
 
