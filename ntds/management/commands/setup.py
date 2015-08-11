@@ -230,7 +230,7 @@ class Command(BaseCommand):
         f1,_ = village_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop greater than 15 female', command='pop_greater_15_female', order=7)
 
 
-        fil_eligible__population_by_age,_ = XForm.on_site.get_or_create(name='fil_elig_population', keyword='psc', owner=user, command_prefix=None, separator = '.',
+        fil_eligible_population_by_age,_ = XForm.on_site.get_or_create(name='fil_elig_population', keyword='pst', owner=user, command_prefix=None, separator = '.',
                                                                   site=Site.objects.get_current(), response='Thanks for your report')
         f1,_ = fil_eligible_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Parish', command='parish_code', order=0)
         f1,_ = fil_eligible_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop Less Than 6 Months male', command='pop_less_6month_male', order=1)
@@ -302,7 +302,7 @@ class Command(BaseCommand):
 
 
 
-        pschi_eligible_population_by_age,_ = XForm.on_site.get_or_create(name='schi_elig_pop', keyword='psc', owner=user, command_prefix=None, separator = '.',
+        pschi_eligible_population_by_age,_ = XForm.on_site.get_or_create(name='schi_elig_pop', keyword='psch', owner=user, command_prefix=None, separator = '.',
                                                                   site=Site.objects.get_current(), response='Thanks for your report')
         f1,_ = pschi_eligible_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Parish', command='parish_code', order=0)
         f1,_ = pschi_eligible_population_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Pop Less Than 6 Months male', command='pop_less_6month_male', order=1)
