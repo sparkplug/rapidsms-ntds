@@ -161,7 +161,7 @@ def handle_treated_fil(xform, submission, health_provider):
     reporter=Reporter.objects.get(healthprovider_ptr=health_provider)
     ntd_location=NtdLocation.objects.filter(code=values["Parish"])
     if ntd_location.exists():
-        report=NTDReport.objects.create(reporter=reporter)
+        report,_=NTDReport.objects.get_or_create(reporter=reporter,parish=ntd_location[0])
         report.parish = ntd_location[0].location
         report.treated_lt_6_male_trac = int(values['Treated Less Than 6 Months male'])
         report.treated_lt_6_female_trac = int(values['Treated Less Than 6 Months female'])
@@ -208,7 +208,7 @@ def handle_treated_trac(xform, submission, health_provider):
     ntd_location=NtdLocation.objects.filter(code=values["Parish"])
     if ntd_location.exists():
 
-        report=NTDReport.objects.create(reporter=reporter)
+        report,_=NTDReport.objects.get_or_create(reporter=reporter,parish=ntd_location[0])
         report.parish = ntd_location[0].location
         report.treated_lt_6_male_trac = int(values['Treated Less Than 6 Months male'])
         report.treated_lt_6_female_trac = int(values['Treated Less Than 6 Months female'])
@@ -250,7 +250,7 @@ def handle_treated_lyf(xform, submission, health_provider):
     ntd_location=NtdLocation.objects.filter(code=values["Parish"])
     reporter=Reporter.objects.get(healthprovider_ptr=health_provider)
     if ntd_location.exists():
-        report=NTDReport.objects.create(reporter=reporter)
+        report,_=NTDReport.objects.get_or_create(reporter=reporter,parish=ntd_location[0])
         report.parish = ntd_location[0].location
         report.treated_lt_6_male_trac = int(values['Treated Less Than 6 Months male'])
         report.treated_lt_6_female_trac = int(values['Treated Less Than 6 Months female'])
@@ -292,7 +292,7 @@ def handle_treated_hel(xform, submission, health_provider):
     reporter=Reporter.objects.get(healthprovider_ptr=health_provider)
     if ntd_location.exists():
 
-        report=NTDReport.objects.create(reporter=reporter)
+        report,_=NTDReport.objects.get_or_create(reporter=reporter,parish=ntd_location[0])
         report.parish = ntd_location[0].location
         report.treated_lt_6_male_trac = int(values['Treated Less Than 6 Months male'])
         report.treated_lt_6_female_trac = int(values['Treated Less Than 6 Months female'])
@@ -335,7 +335,7 @@ def handle_treated_schi(xform, submission, health_provider):
     reporter=Reporter.objects.get(healthprovider_ptr=health_provider)
     if ntd_location.exists():
 
-        report=NTDReport.objects.create(reporter=reporter)
+        report,_=NTDReport.objects.get_or_create(reporter=reporter,parish=ntd_location[0])
         report.parish = ntd_location[0].location
         report.treated_lt_6_male_trac = int(values['Treated Less Than 6 Months male'])
         report.treated_lt_6_female_trac = int(values['Treated Less Than 6 Months female'])
@@ -379,8 +379,7 @@ def handle_treated_onch(xform, submission, health_provider):
     ntd_location=NtdLocation.objects.filter(code=values["Parish"])
     reporter=Reporter.objects.get(healthprovider_ptr=health_provider)
     if ntd_location.exists():
-        report=NTDReport.objects.create(reporter=reporter)
-        report.parish = ntd_location[0].location
+        report,_=NTDReport.objects.get_or_create(reporter=reporter,parish=ntd_location[0])
         report.treated_lt_6_male_trac = int(values['Treated Less Than 6 Months male'])
         report.treated_lt_6_female_trac = int(values['Treated Less Than 6 Months female'])
         report.treated_6_to_4_male_trac = int(values['Treated 6 Months to 4 years male'])
