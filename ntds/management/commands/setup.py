@@ -131,7 +131,7 @@ class Command(BaseCommand):
         onch_treated_by_age,_ = XForm.on_site.get_or_create(name='onch_treated_by_age', keyword='ov', owner=user, command_prefix=None, separator = '.',
                                                             site=Site.objects.get_current(), response='Thanks for your report')
 
-        onch,_ = onch_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Parish', command='parish_code', order=0)
+        #onch,_ = onch_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Parish', command='parish_code', order=0)
         onch,_ = onch_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='No of communities and schools', command='no_of_schools', order=1)
         onch,_ = onch_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated Less Than 6 Months male', command='trd_less_6month_male', order=2)
         onch,_ = onch_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated Less Than 6 Months female', command='trd_less_6month_female', order=3)
@@ -147,7 +147,7 @@ class Command(BaseCommand):
                                                        site=Site.objects.get_current(), response='Thanks for your report')
 
 
-        fi,_ = schi_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Parish', command='parish_code', order=0)
+        #fi,_ = schi_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Parish', command='parish_code', order=0)
         fi,_ = schi_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='No of communities and schools', command='no_of_schools', order=1)
         fi,_ = schi_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated Less Than 6 Months male', command='trd_less_6month_male', order=2)
         fi,_ = schi_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated Less Than 6 Months female', command='trd_less_6month_female', order=3)
@@ -161,7 +161,7 @@ class Command(BaseCommand):
         lf_treated_by_age,_ = XForm.on_site.get_or_create(name='lf_treated_by_age', keyword='lf', owner=user, command_prefix=None, separator = '.',
                                                        site=Site.objects.get_current(), response='Thanks for your report')
 
-        fi,_ = lf_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Parish', command='parish_code', order=0)
+        #fi,_ = lf_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Parish', command='parish_code', order=0)
         fi,_ = lf_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='No of communities and schools', command='no_of_schools', order=1)
         fi,_ = lf_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated Less Than 6 Months male', command='trd_less_6month_male', order=2)
         fi,_ = lf_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated Less Than 6 Months female', command='trd_less_6month_female', order=3)
@@ -175,7 +175,7 @@ class Command(BaseCommand):
 
         fil_treated_by_age,_ = XForm.on_site.get_or_create(name='fil_treated_by_age', keyword='sc', owner=user, command_prefix=None, separator = '.',
                                                            site=Site.objects.get_current(), response='Thanks for your report')
-        fi,_ = fil_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Parish', command='parish_code', order=0)
+        #fi,_ = fil_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Parish', command='parish_code', order=0)
         fi,_ = fil_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='No of communities and schools', command='no_of_schools', order=1)
         fi,_ = fil_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated Less Than 6 Months male', command='trd_less_6month_male', order=2)
         fi,_ = fil_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated Less Than 6 Months female', command='trd_less_6month_female', order=3)
@@ -189,7 +189,7 @@ class Command(BaseCommand):
 
         trac_treated_by_age,_ = XForm.on_site.get_or_create(name='trac_treated_by_age', keyword='tr', owner=user, command_prefix=None, separator = '.',
                                                            site=Site.objects.get_current(), response='Thanks for your report')
-        f1,_ = trac_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Parish', command='parish_code', order=0)
+        #f1,_ = trac_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Parish', command='parish_code', order=0)
         f1,_ = trac_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='No of communities and schools', command='no_of_schools', order=1)
         trac,_ = trac_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated Less Than 6 Months male', command='trd_less_6month_male', order=2)
         trac,_ = trac_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated Less Than 6 Months female', command='trd_less_6month_female', order=3)
@@ -205,7 +205,7 @@ class Command(BaseCommand):
 
         hel_treated_by_age,_ = XForm.on_site.get_or_create(name='hel_treated_by_age', keyword='hel', owner=user, command_prefix=None, separator = '.',
                                                             site=Site.objects.get_current(), response='Thanks for your report')
-        f1,_ = hel_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Parish', command='parish_code', order=0)
+        #f1,_ = hel_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Parish', command='parish_code', order=0)
         f1,_ = hel_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='No of communities and schools', command='no_of_schools', order=1)
         hel,_ = hel_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated Less Than 6 Months male', command='trd_less_6month_male', order=2)
         hel,_ = hel_treated_by_age.fields.get_or_create(field_type=XFormField.TYPE_TEXT, name='Treated Less Than 6 Months female', command='trd_less_6month_female', order=3)

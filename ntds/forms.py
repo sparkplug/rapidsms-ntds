@@ -6,6 +6,10 @@ from .utils import ExcelResponse,validate_number
 from rapidsms.contrib.locations.models import Location
 from django.utils.safestring import mark_safe
 from .models import Reporter
+import operator
+from django.db.models import Q
+import re
+from rapidsms_httprouter.models import Message, Connection
 
 class ExcelUploadForm(forms.Form):
     excel_file = forms.FileField(label='Reporters Excel File',
@@ -160,12 +164,12 @@ class FreeSearchForm(FilterForm):
         elif searchx[0] in ["'", '"'] and searchx[-1] in ["'", '"']:
             searchx = searchx[1:-1]
             return queryset.filter(Q(name__iregex=".*\m(%s)\y.*" % searchx)
-                                   | Q(location__iregex=".*\m(%s)\y.*" % searchx)
+                                   | Q(location__name__iregex=".*\m(%s)\y.*" % searchx)
                                    | Q(connection__identity__iregex=".*\m(%s)\y.*" % searchx))
 
         else:
             return queryset.filter(Q(name__icontains=searchx)
-                                   | Q(location__icontains=searchx)
+                                   | Q(location__name__icontains=searchx)
                                    | Q(connection__identity__icontains=searchx))
 
 class MultipleDistictFilterForm(FilterForm):
@@ -178,8 +182,10 @@ class MultipleDistictFilterForm(FilterForm):
     def filter(self, request, queryset):
 
         districts = Location.objects.filter(pk__in=self.cleaned_data['districts']).values_list("name",flat=True)
+
         if len(districts):
-            return queryset.filter(pk__in=queryset).filter(reduce(operator.or_, (Q(location__contains=x) for x in districts)))
+            import pdb;pdb.set_trace()
+            return queryset.filter(pk__in=queryset).filter(reduce(operator.or_, (Q(location__name__icontains=x) for x in districts)))
         else:
             return queryset
 

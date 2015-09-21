@@ -1,0 +1,64 @@
+{% extends "generic/base.html" %}
+{% block title %}
+Reports - {{ block.super }}
+{% endblock %}
+{% block stylesheets %}
+
+<link href="http://fonts.googleapis.com/ntds/stylesheets?family=Lato:100,300,400,700" media="all" rel="stylesheet"
+      type="text/css"/>
+<link href="/static/ntds/stylesheets/bootstrap.min.css" media="all" rel="stylesheet" type="text/css"/>
+<link href="/static/ntds/stylesheets/font-awesome.css" media="all" rel="stylesheet" type="text/css"/>
+<link href="/static/ntds/stylesheets/afro-font.css" media="all" rel="stylesheet" type="text/css"/>
+<link href="/static/ntds/stylesheets/style.css" media="all" rel="stylesheet" type="text/css"/>
+<link href="/static/ntds/stylesheets/afro.css" media="all" rel="alternate stylesheet" title="gray-theme" type="text/css"/>
+<link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}mtrack/stylesheets/layout.css" />
+<link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}rapidsms/stylesheets/splits.css" />
+<link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}rapidsms/stylesheets/modules.css" />
+<link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}rapidsms/stylesheets/tables.css" />
+<link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}rapidsms/stylesheets/forms.css" />
+<link type="text/css" rel="stylesheet" href="{{ MEDIA_URL }}rapidsms/stylesheets/icons.css" />
+<link type="text/css" rel="stylesheet" href="{{MEDIA_URL}}generic/stylesheets/generic.css"/>
+
+{% endblock %}
+{% block javascripts %}
+<script src="{{ MEDIA_URL }}ntds/javascripts/jquery-1.8.2.js"></script>
+<script src="/static/ntds/javascripts/bootstrap.min.js?12"></script>
+<script src="/static/ntds/javascripts/generic.js?125"></script>
+
+
+{% endblock %}
+
+
+
+
+{% block header %}
+{{ block.super }}
+<div >
+
+    <div  class="stats-container" style="height:40px;min-height: 40px; margin-top:20px;">
+        <div class="col-md-7">
+
+
+            <h2 class="number" style="padding-top:0px;font-size:36px;text-align: left;">All NTDs Messages</h2>
+
+
+        </div>
+        <div class="col-md-5">
+
+
+            <a class="btn btn-primary" href="/ntds/dashboard">
+                &larr;Back
+            </a>
+
+
+        </div>
+    </div>
+
+
+
+</div>
+
+{% endblock %}
+
+
+

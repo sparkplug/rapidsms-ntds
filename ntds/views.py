@@ -86,7 +86,7 @@ def dashboard(request):
     return render_to_response("ntds/dashboard.html", context, context_instance=RequestContext(request))
 
 
-def view_analytics(request):
+def view_diseases(request):
     bubbles_to_ret = []
     pdata = {}
     ldata = {}
@@ -128,8 +128,7 @@ def manage_reporters(request):
     filter_forms = [FreeSearchForm, MultipleDistictFilterForm]
     action_forms = [DownloadForm, SendTextForm]
 
-    if not request.POST.get("page_num") and request.method == "POST":
-        return ExcelResponse(queryset)
+
     return generic(
         request,
         model=Reporter,
@@ -205,7 +204,7 @@ def upload_reporters(request):
     return render_to_response("ntds/upload_reporters.html", dict(form=form), context_instance=RequestContext(request))
 
 
-def reports(request, location_id=None):
+def view_districts(request, location_id=None):
     reports = NTDReport.objects.values("reporter__district", "reporter__district__name", "updated", "trachoma",
                                        "helminthiasis", "schistosomiasis",
                                        "onchocerciasis", "filariasis", "lymphatic").annotate(Sum("lymphatic"),
@@ -508,6 +507,8 @@ def drug_report(request):
     )
 
 
+
+
 def view_submissions(request, reporter_id=None):
     if reporter_id:
         reporter = get_object_or_404(Reporter, pk=reporter_id)
@@ -516,14 +517,15 @@ def view_submissions(request, reporter_id=None):
             connection__contact__healthproviderbase__healthprovider=health_provider)
     else:
         group, _ = Group.objects.get_or_create(name='Ntds')
-        submissions = XFormSubmission.objects.filter(connection__contact__groups=group)
+        submissions = XFormSubmission.objects.filter(connection__contact__groups=group).order_by("-message__date")
 
-    columns = [('Name', True, 'title', SimpleSorter()),
-               ('Parish', True, 'decription', SimpleSorter()),
-               ('Mobile', True, 'questions__name', SimpleSorter()),
-               ('Status', True, 'enabled', SimpleSorter()),
-               ('Submissions', False, '', ''),
-               ('Last Submission', False, '', ''),
+    columns = [('Name', True, 'name', SimpleSorter()),
+               ('Parish', True, 'connection__contact__healthproviderbase__healthprovider__location', SimpleSorter()),
+               ('District', True, 'connection__contact__healthproviderbase__healthprovider__reporter__district', SimpleSorter()),
+               ('Mobile', True, 'connection__identity', SimpleSorter()),
+               ('Valid', True, 'enabled', SimpleSorter()),
+               ('Message', False, 'message__text', SimpleSorter()),
+
     ]
 
     return generic(
@@ -564,32 +566,28 @@ def edit_reporter(request, pk):
                               context_instance=RequestContext(request))
 
 
-@csrf_exempt
-@user_passes_test(lambda u: u.is_staff or u.is_superuser)
 def view_messages(request):
     # filter_forms = []
     #action_forms = []
+    group, _ = Group.objects.get_or_create(name='Ntds')
+    messages = Message.objects.filter(connection__contact__groups=group).order_by("-date")
 
-    partial_row = 'mission/partials/messages_row.html'
-    base_template = 'mission/partials/messages_base.html'
-    paginator_template = 'mission/partials/pagination.html'
+    partial_row = 'ntds/partials/message_row.html'
     columns = [('Message', True, 'text', SimpleSorter()),
-               ('Type', True, 'type', SimpleSorter()),
-               ('sender', True, 'sender__username', SimpleSorter()),
-               ('Destination', True, 'identifier', SimpleSorter()),
-               ('Date', True, 'created', SimpleSorter()),
-               ('Status', True, 'delivered', SimpleSorter()),
+               ('Mobile', True, 'identity', SimpleSorter()),
+               ('Date', True, 'date', SimpleSorter()),
+               ('Direction', True, 'direction', SimpleSorter()),
+
     ]
     return generic(
         request,
         model=Message,
-        queryset=Message.objects.all(),
+        queryset=messages,
         objects_per_page=25,
         partial_row=partial_row,
         results_title="Messages",
         title="All SMS ",
-        base_template=base_template,
-        paginator_template=paginator_template,
+        base_template="ntds/messages_base.html",
         columns=columns,
         sort_column='pk',
         show_unfiltered=False,

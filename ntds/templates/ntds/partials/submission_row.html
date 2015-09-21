@@ -10,11 +10,15 @@
 </td>
 
 <td>
+    {{ object.connection.contact.healthproviderbase.healthprovider.reporter.district}}
+</td>
+
+<td>
     {{ object.connection.identity }}
 </td>
 
 <td>
-    {{ object.connection.contact.healthproviderbase.healthprovider.active}}
+    {{ object.has_errors}}
 </td>
 
 
@@ -25,6 +29,6 @@
     </td>
 
 <td>
-    {{ object.last_submis }}
+    {{ object.last_submission }}
 </td>
 

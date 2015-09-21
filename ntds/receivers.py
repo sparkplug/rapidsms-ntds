@@ -95,6 +95,7 @@ def handle_schools_targeted(xform, submission, reporter):
 
 def handle_treated(xform, submission, reporter):
     from .models import ReportProgress
+    import pdb;pdb.set_trace()
     values_list=submission.submission_values().values("attribute__name","value_text")
     values=pivot_dicts(values_list)
     report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-updated")[0]
