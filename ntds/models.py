@@ -27,7 +27,7 @@ class Translation(models.Model):
 
 class NTDReport(models.Model):
     reporter = models.ForeignKey("Reporter")
-    parish = models.ForeignKey("NtdLocation")
+    parish = models.ForeignKey(Location)
     xforms = models.ManyToManyField(XForm)
     population = models.IntegerField(max_length=10,default=0,blank=True)
     total_villages = models.IntegerField(max_length=10,default=0,blank=True)
@@ -38,6 +38,13 @@ class NTDReport(models.Model):
     schools_targeted = models.IntegerField(max_length=10,default=0,blank=True)
     schools_treated = models.IntegerField(max_length=10,default=0,blank=True)
     schools_incomplete = models.IntegerField(max_length=10,default=0,blank=True)
+
+    number_of_communities_trac = models.IntegerField(max_length=10,default=0,blank=True)
+    number_of_communities_hel = models.IntegerField(max_length=10,default=0,blank=True)
+    number_of_communities_onch = models.IntegerField(max_length=10,default=0,blank=True)
+    number_of_communities_schi = models.IntegerField(max_length=10,default=0,blank=True)
+    number_of_communities_lyf = models.IntegerField(max_length=10,default=0,blank=True)
+    number_of_communities_fil = models.IntegerField(max_length=10,default=0,blank=True)
 
 
     treated_lt_6_male = models.IntegerField(max_length=10,default=0,blank=True)
@@ -250,6 +257,7 @@ class NtdLocation(models.Model):
 class Reporter(HealthProvider):
     district = models.ForeignKey(Location,related_name="districts",null=True,blank=True)
     subcounty = models.ForeignKey(Location,related_name="subcounties",null=True,blank=True)
+    parish = models.ForeignKey(Location,related_name="parish",null=True,blank=True)
     reporting_area=models.ManyToManyField(Location)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

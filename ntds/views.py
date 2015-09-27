@@ -404,6 +404,7 @@ def view_districts(request, location_id=None):
             Sum("schistosomiasis"),
             Sum("trachoma"),
             Sum("helminthiasis"),
+
             Sum("alb_received"), Sum("ivm_received"), Sum("pzq_received"), Sum("mbd_received"), Sum("ttr_received"),
             Sum("ziths_received"), Sum("zitht_received"),
             Sum("alb_wasted"), Sum("ivm_wasted"), Sum("pzq_wasted"), Sum("mbd_wasted"), Sum("ttr_wasted"),
@@ -626,7 +627,6 @@ def get_all_parishes(request):
             pass
     s = map(lambda x: [x.pk, x.name], parishes)
     return JSONResponse(s)
-
 
 
 
