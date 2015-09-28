@@ -63,9 +63,10 @@ class Migration(DataMigration):
         db.execute(ntd_report)
         db.execute(disease_report)
         db.execute(district_report)
-        # Note: Don't use "from appname.models import ModelName". 
+        # Note: Don't use "from appname.models import ModelName".
         # Use orm.ModelName to refer to models in this application,
         # and orm['appname.ModelName'] for models in other applications.
+
 
     def backwards(self, orm):
         "Write your backwards methods here."
@@ -337,6 +338,12 @@ class Migration(DataMigration):
             'mbd_received': ('django.db.models.fields.IntegerField', [], {'default': '0', 'max_length': '10', 'blank': 'True'}),
             'mbd_used': ('django.db.models.fields.IntegerField', [], {'default': '0', 'max_length': '10', 'blank': 'True'}),
             'mbd_wasted': ('django.db.models.fields.IntegerField', [], {'default': '0', 'max_length': '10', 'blank': 'True'}),
+            'number_of_communities_fil': ('django.db.models.fields.IntegerField', [], {'default': '0', 'max_length': '10', 'blank': 'True'}),
+            'number_of_communities_hel': ('django.db.models.fields.IntegerField', [], {'default': '0', 'max_length': '10', 'blank': 'True'}),
+            'number_of_communities_lyf': ('django.db.models.fields.IntegerField', [], {'default': '0', 'max_length': '10', 'blank': 'True'}),
+            'number_of_communities_onch': ('django.db.models.fields.IntegerField', [], {'default': '0', 'max_length': '10', 'blank': 'True'}),
+            'number_of_communities_schi': ('django.db.models.fields.IntegerField', [], {'default': '0', 'max_length': '10', 'blank': 'True'}),
+            'number_of_communities_trac': ('django.db.models.fields.IntegerField', [], {'default': '0', 'max_length': '10', 'blank': 'True'}),
             'onchocerciasis': ('django.db.models.fields.IntegerField', [], {'default': '0', 'max_length': '10', 'blank': 'True'}),
             'parish': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['locations.Location']"}),
             'pop_4_to_14_female': ('django.db.models.fields.IntegerField', [], {'default': '0', 'max_length': '10', 'blank': 'True'}),
