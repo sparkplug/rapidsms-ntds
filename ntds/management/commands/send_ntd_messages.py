@@ -17,14 +17,12 @@ class Command(BaseCommand):
     def sendall(self):
 
         try:
-            transaction.enter_transaction_management()
             msgs= Message.objects.filter(direction='O',status__in=['Q','P'])
             for msg in msgs:
                 send_message.delay(msg.text,msg.connection.identity)
             msgs.update(status='S')
         except Exception, exc:
             print exc
-            transaction.rollback()
 
     def handle(self, **options):
         self.sendall()
