@@ -5,6 +5,7 @@ from django.conf import settings
 from healthmodels.models.HealthProvider import HealthProvider
 from rapidsms_xforms.models import XForm,XFormReportSubmission
 
+
 class OptinWord(models.Model):
     words = models.CharField(max_length=500)
     language = models.CharField(max_length=5, choices=settings.LANGUAGES, null=True)
@@ -305,6 +306,6 @@ def gettext_db(field, language):
         deactivate()
         return lang_str
 
-
+from tasks import send_message
 
 
