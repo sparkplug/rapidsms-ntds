@@ -25,4 +25,5 @@ class Command(BaseCommand):
             print exc
 
     def handle(self, **options):
-        self.sendall()
+        while (True):
+            self.sendall()
