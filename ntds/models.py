@@ -259,16 +259,20 @@ class Reporter(HealthProvider):
     district = models.ForeignKey(Location,related_name="districts",null=True,blank=True)
     subcounty = models.ForeignKey(Location,related_name="subcounties",null=True,blank=True)
     parish = models.ForeignKey(Location,related_name="parish",null=True,blank=True)
+    region = models.CharField(max_length=50)
+    subcounty_supervisor = models.CharField(max_length=50)
+    subcounty_supervisor_mobile = models.CharField(max_length=50)
+    community = models.CharField(max_length=50)
+    health_subcounty = models.CharField(max_length=50)
+    id_number = models.CharField(max_length=50)
+    county = models.CharField(max_length=50)
     reporting_area=models.ManyToManyField(Location)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    parish_name=models.CharField(max_length=50)
+    subcounty_name=models.CharField(max_length=50)
 
-    def save(self, *args, **kwargs):
-        if not self.district and self.location:
-            self.district =self.location.get_ancestors().get(type="district")
-            self.subcounty=self.location.get_ancestors().get(type="sub_county")
 
-        super(Reporter, self).save(*args, **kwargs)
 
 class RegistrationPhase(models.Model):
     parish=models.ForeignKey(Location)
