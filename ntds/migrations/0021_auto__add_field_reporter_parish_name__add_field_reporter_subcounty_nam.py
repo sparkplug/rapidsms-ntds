@@ -8,26 +8,8 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Removing unique constraint on 'Reporter', fields ['subcounty_supervisor_mobile']
-        db.delete_unique('ntds_reporter', ['subcounty_supervisor_mobile'])
 
-        # Removing unique constraint on 'Reporter', fields ['county']
-        db.delete_unique('ntds_reporter', ['county'])
 
-        # Removing unique constraint on 'Reporter', fields ['health_subcounty']
-        db.delete_unique('ntds_reporter', ['health_subcounty'])
-
-        # Removing unique constraint on 'Reporter', fields ['community']
-        db.delete_unique('ntds_reporter', ['community'])
-
-        # Removing unique constraint on 'Reporter', fields ['region']
-        db.delete_unique('ntds_reporter', ['region'])
-
-        # Removing unique constraint on 'Reporter', fields ['id_number']
-        db.delete_unique('ntds_reporter', ['id_number'])
-
-        # Removing unique constraint on 'Reporter', fields ['subcounty_supervisor']
-        db.delete_unique('ntds_reporter', ['subcounty_supervisor'])
 
         # Adding field 'Reporter.parish_name'
         db.add_column('ntds_reporter', 'parish_name',
@@ -47,27 +29,7 @@ class Migration(SchemaMigration):
         # Deleting field 'Reporter.subcounty_name'
         db.delete_column('ntds_reporter', 'subcounty_name')
 
-        # Adding unique constraint on 'Reporter', fields ['subcounty_supervisor']
-        db.create_unique('ntds_reporter', ['subcounty_supervisor'])
-
-        # Adding unique constraint on 'Reporter', fields ['id_number']
-        db.create_unique('ntds_reporter', ['id_number'])
-
-        # Adding unique constraint on 'Reporter', fields ['region']
-        db.create_unique('ntds_reporter', ['region'])
-
-        # Adding unique constraint on 'Reporter', fields ['community']
-        db.create_unique('ntds_reporter', ['community'])
-
-        # Adding unique constraint on 'Reporter', fields ['health_subcounty']
-        db.create_unique('ntds_reporter', ['health_subcounty'])
-
-        # Adding unique constraint on 'Reporter', fields ['county']
-        db.create_unique('ntds_reporter', ['county'])
-
-        # Adding unique constraint on 'Reporter', fields ['subcounty_supervisor_mobile']
-        db.create_unique('ntds_reporter', ['subcounty_supervisor_mobile'])
-
+       
 
     models = {
         'auth.group': {
