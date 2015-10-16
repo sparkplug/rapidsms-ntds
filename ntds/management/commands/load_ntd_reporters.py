@@ -24,16 +24,7 @@ class Command(BaseCommand):
 
 
     def handle(self, **options):
-        apo=Location.objects.get(name="Yumbe",type="district").get_descendants().filter(type="sub_county",name="Apo")[0]
-        yeta=Location.objects.create(name="Yeta",type="parish")
-        yeta.parent=apo
-        yeta.save()
-        ariinga=Location.objects.create(name="Ariinga",type="parish")
-        ariinga.parent=apo
-        ariinga.save()
-        a=Location.objects.get(name="Yumbe",type="district").get_descendants().filter(type="parish").filter(name__icontains="ariya")[0]
-        a.name="aria"
-        a.save()
+        
         file = options['file']
         wb = load_workbook(filename=file)
         ws=wb.get_sheet_by_name("Community and Schools")

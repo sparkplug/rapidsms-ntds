@@ -29,7 +29,7 @@ class Migration(SchemaMigration):
         # Deleting field 'Reporter.subcounty_name'
         db.delete_column('ntds_reporter', 'subcounty_name')
 
-       
+
 
     models = {
         'auth.group': {
