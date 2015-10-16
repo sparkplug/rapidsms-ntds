@@ -10,7 +10,7 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         # Adding field 'Reporter.county'
         db.add_column('ntds_reporter', 'county',
-                      self.gf('django.db.models.fields.CharField')(default='', unique=True, max_length=50),
+                      self.gf('django.db.models.fields.CharField')(default='', max_length=50),
                       keep_default=False)
 
 

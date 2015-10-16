@@ -10,32 +10,32 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         # Adding field 'Reporter.region'
         db.add_column('ntds_reporter', 'region',
-                      self.gf('django.db.models.fields.CharField')(default='', unique=True, max_length=50),
+                      self.gf('django.db.models.fields.CharField')(default='',  max_length=50),
                       keep_default=False)
 
         # Adding field 'Reporter.subcounty_supervisor'
         db.add_column('ntds_reporter', 'subcounty_supervisor',
-                      self.gf('django.db.models.fields.CharField')(default='', unique=True, max_length=50),
+                      self.gf('django.db.models.fields.CharField')(default='', max_length=50),
                       keep_default=False)
 
         # Adding field 'Reporter.subcounty_supervisor_mobile'
         db.add_column('ntds_reporter', 'subcounty_supervisor_mobile',
-                      self.gf('django.db.models.fields.CharField')(default='', unique=True, max_length=50),
+                      self.gf('django.db.models.fields.CharField')(default='', max_length=50),
                       keep_default=False)
 
         # Adding field 'Reporter.community'
         db.add_column('ntds_reporter', 'community',
-                      self.gf('django.db.models.fields.CharField')(default='', unique=True, max_length=50),
+                      self.gf('django.db.models.fields.CharField')(default='',  max_length=50),
                       keep_default=False)
 
         # Adding field 'Reporter.health_subcounty'
         db.add_column('ntds_reporter', 'health_subcounty',
-                      self.gf('django.db.models.fields.CharField')(default='', unique=True, max_length=50),
+                      self.gf('django.db.models.fields.CharField')(default='',  max_length=50),
                       keep_default=False)
 
         # Adding field 'Reporter.id_number'
         db.add_column('ntds_reporter', 'id_number',
-                      self.gf('django.db.models.fields.CharField')(default='', unique=True, max_length=50),
+                      self.gf('django.db.models.fields.CharField')(default='',  max_length=50),
                       keep_default=False)
 
 
