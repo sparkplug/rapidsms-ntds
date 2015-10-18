@@ -24,7 +24,7 @@ class Command(BaseCommand):
 
 
     def handle(self, **options):
-        
+
         file = options['file']
         wb = load_workbook(filename=file)
         ws=wb.get_sheet_by_name("Community and Schools")
@@ -32,7 +32,11 @@ class Command(BaseCommand):
             try:
                 role, _ = Group.objects.get_or_create(name='Ntds')
                 mobile_is_valid,cleaned_mobile=validate_number("0"+str(row[10].value))
-                msisdn, backend = assign_backend(cleaned_mobile)
+                try:
+                    msisdn, backend = assign_backend(cleaned_mobile)
+                except ValidationError:
+                    msisdn, backend = assign_backend(str(row[10].value).split("/")[0])
+
                 connection, created = Connection.objects.get_or_create(identity=cleaned_mobile, backend=backend)
                 district=Location.objects.filter(type="district",name__icontains= row[2].value.strip())[0]
                 try:
@@ -44,7 +48,7 @@ class Command(BaseCommand):
                     parish=None
                     print "index error  %s"%row[8].value
 
-                provider = HealthProvider.objects.create(name=row[8].value.strip(), location=parish)
+                provider = HealthProvider.objects.create(name=row[9].value.strip(), location=parish)
 
                 provider.groups.add(role)
                 connection.contact = provider
@@ -63,5 +67,5 @@ class Command(BaseCommand):
                 rep.subcounty_name = row[2].value.strip()
                 rep.parish_name = row[8].value.strip()
                 rep.save()
-            except (django.core.exceptions.MultipleObjectsReturned,ValidationError):
+            except (ValidationError):
                 print row[8].value
