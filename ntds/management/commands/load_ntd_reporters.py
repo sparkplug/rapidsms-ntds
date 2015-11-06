@@ -41,7 +41,7 @@ class Command(BaseCommand):
                 backend,_=Backend.objects.get_or_create(name="yo")
 
 
-                connection, created = Connection.objects.get_or_create(identity=cleaned_mobile, backend=backend)
+                connection, conn_created = Connection.objects.get_or_create(identity=cleaned_mobile, backend=backend)
                 try:
                     district=Location.objects.filter(type="district",name__icontains= row[2].value.strip())[0]
                 except IndexError:
@@ -59,29 +59,33 @@ class Command(BaseCommand):
                     parish=None
                     print "index error  %s"%row[8].value
 
-                provider = HealthProvider.objects.create(name=row[9].value.strip(), location=parish)
-
-                provider.groups.add(role)
-                connection.contact = provider
-                connection.save()
-                rep = Reporter(healthprovider_ptr=provider)
-                rep.__dict__.update(provider.__dict__)
-                rep.district=district
-                rep.subcounty=subcounty
-                rep.parish=parish
+                if conn_created:
+                    provider = HealthProvider.objects.create(name=row[9].value.strip(), location=parish)
+                    provider.groups.add(role)
+                    connection.contact = provider
+                    connection.save()
+             
 
 
-                rep.community=row[11].value.strip()
-                rep.id_number=str(row[0].value)
-                rep.county=row[3].value.strip()
-                rep.subcounty_supervisor=row[6].value.strip()
-                _,s_mobile=validate_number(str(row[7].value))
-                rep.subcounty_supervisor_mobile=s_mobile
-                rep.region=row[1].value.strip()
-                rep.health_subcounty=row[4].value.strip()
-                rep.subcounty_name = row[5].value.strip()
-                rep.parish_name = row[8].value.strip()
-                rep.save()
+                
+                    rep = Reporter(healthprovider_ptr=provider)
+                    rep.__dict__.update(provider.__dict__)
+                    rep.district=district
+                    rep.subcounty=subcounty
+                    rep.parish=parish
+
+
+                    rep.community=row[11].value.strip()
+                    rep.id_number=str(row[0].value)
+                    rep.county=row[3].value.strip()
+                    rep.subcounty_supervisor=row[6].value.strip()
+                    _,s_mobile=validate_number(str(row[7].value))
+                    rep.subcounty_supervisor_mobile=s_mobile
+                    rep.region=row[1].value.strip()
+                    rep.health_subcounty=row[4].value.strip()
+                    rep.subcounty_name = row[5].value.strip()
+                    rep.parish_name = row[8].value.strip()
+                    rep.save()
             except ValidationError:
                 pass
 
