@@ -29,43 +29,50 @@ class Command(BaseCommand):
         wb = load_workbook(filename=file)
         ws=wb.get_sheet_by_name("Community and Schools")
         for row in ws.rows[1:]:
+
+            role, _ = Group.objects.get_or_create(name='Ntds')
+            mobile_is_valid,cleaned_mobile=validate_number("0"+str(row[10].value))
             try:
-                role, _ = Group.objects.get_or_create(name='Ntds')
-                mobile_is_valid,cleaned_mobile=validate_number("0"+str(row[10].value))
-                try:
-                    msisdn, backend = assign_backend(cleaned_mobile)
-                except ValidationError:
-                    msisdn, backend = assign_backend(str(row[10].value).split("/")[0])
+                msisdn, backend = assign_backend(cleaned_mobile)
+            except ValidationError:
+                msisdn, backend = assign_backend(str(row[10].value).split("/")[0])
 
-                connection, created = Connection.objects.get_or_create(identity=cleaned_mobile, backend=backend)
-                district=Location.objects.filter(type="district",name__icontains= row[2].value.strip())[0]
-                try:
-                    pr=row[8].value.strip()
-                    if pr=="Aria":
-                        pr="Ariya"
-                    parish=district.get_descendants().filter(type="parish",name__icontains=row[8].value.strip())[0]
-                except IndexError:
-                    parish=None
-                    print "index error  %s"%row[8].value
+            backend,_=Backend.objects.get_or_create(name="yo")
 
-                provider = HealthProvider.objects.create(name=row[9].value.strip(), location=parish)
 
-                provider.groups.add(role)
-                connection.contact = provider
-                connection.save()
-                rep = Reporter(healthprovider_ptr=provider)
-                rep.__dict__.update(provider.__dict__)
+            connection, created = Connection.objects.get_or_create(identity=cleaned_mobile, backend=backend)
+            district=Location.objects.filter(type="district",name__icontains= row[2].value.strip())[0]
+            subcounty=Location.objects.filter(type="sub_county",name__icontains= row[5].value.strip())[0]
+            try:
+                pr=row[8].value.strip()
+                if pr=="Aria":
+                    pr="Ariya"
+                parish=district.get_descendants().filter(type="parish",name__icontains=row[8].value.strip())[0]
+            except IndexError:
+                parish=None
+                print "index error  %s"%row[8].value
 
-                rep.community=row[11].value.strip()
-                rep.id_number=str(row[0].value)
-                rep.county=row[3].value.strip()
-                rep.subcounty_supervisor=row[6].value.strip()
-                _,s_mobile=validate_number(str(row[7].value))
-                rep.subcounty_supervisor_mobile=s_mobile
-                rep.region=row[1].value.strip()
-                rep.health_subcounty=row[4].value.strip()
-                rep.subcounty_name = row[2].value.strip()
-                rep.parish_name = row[8].value.strip()
-                rep.save()
-            except (ValidationError):
-                print row[8].value
+            provider = HealthProvider.objects.create(name=row[9].value.strip(), location=parish)
+
+            provider.groups.add(role)
+            connection.contact = provider
+            connection.save()
+            rep = Reporter(healthprovider_ptr=provider)
+            rep.__dict__.update(provider.__dict__)
+            rep.district=district
+            rep.subcounty=subcounty
+            rep.parish=parish
+
+
+            rep.community=row[11].value.strip()
+            rep.id_number=str(row[0].value)
+            rep.county=row[3].value.strip()
+            rep.subcounty_supervisor=row[6].value.strip()
+            _,s_mobile=validate_number(str(row[7].value))
+            rep.subcounty_supervisor_mobile=s_mobile
+            rep.region=row[1].value.strip()
+            rep.health_subcounty=row[4].value.strip()
+            rep.subcounty_name = row[5].value.strip()
+            rep.parish_name = row[8].value.strip()
+            rep.save()
+
