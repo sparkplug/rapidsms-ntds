@@ -41,8 +41,14 @@ class Command(BaseCommand):
 
 
             connection, created = Connection.objects.get_or_create(identity=cleaned_mobile, backend=backend)
-            district=Location.objects.filter(type="district",name__icontains= row[2].value.strip())[0]
-            subcounty=Location.objects.filter(type="sub_county",name__icontains= row[5].value.strip())[0]
+            try:
+                district=Location.objects.filter(type="district",name__icontains= row[2].value.strip())[0]
+            except IndexError:
+                district=None
+            try:
+                subcounty=Location.objects.filter(type="sub_county",name__icontains= row[5].value.strip())[0]
+            except IndexError:
+                subcounty=None
             try:
                 pr=row[8].value.strip()
                 if pr=="Aria":
