@@ -15,7 +15,7 @@ from openpyxl.reader.excel import load_workbook
 from openpyxl.workbook import Workbook
 from uganda_common.utils import assign_backend
 from healthmodels.models.HealthProvider import HealthProvider
-from rapidsms.models import Connection, Contact
+from rapidsms.models import Connection, Contact,Backend
 from optparse import make_option
 import django
 class Command(BaseCommand):
