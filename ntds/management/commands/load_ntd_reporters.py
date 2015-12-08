@@ -24,6 +24,7 @@ class Command(BaseCommand):
 
 
     def handle(self, **options):
+        import pdb;pdb.set_trace()
 
         file = options['file']
         wb = load_workbook(filename=file)
