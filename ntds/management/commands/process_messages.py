@@ -47,7 +47,7 @@ class Command(BaseCommand):
                 print "...............................",msg
             except ValueError:
                 print "Error................................................ ,",msg
-            msg.application="rerun"
+          
 
 
 
