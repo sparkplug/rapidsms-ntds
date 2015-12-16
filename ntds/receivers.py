@@ -161,7 +161,7 @@ def handle_treated_fil(xform, submission, health_provider):
     reporter=Reporter.objects.get(healthprovider_ptr=health_provider)
     try:
 
-        report,_=NTDReport.objects.get_or_create(reporter=reporter,parish=reporter.parish)
+        report,_=NTDReport.objects.get_or_create(reporter=reporter)
         report.number_of_communities_fil = int(values['No of communities and schools'])
         report.treated_lt_6_male_fil = int(values['Treated Less Than 6 Months male'])
         report.treated_lt_6_female_fil = int(values['Treated Less Than 6 Months female'])
@@ -205,7 +205,7 @@ def handle_treated_trac(xform, submission, health_provider):
         reporter=Reporter.objects.get(healthprovider_ptr=health_provider)
 
         values=pivot_dicts(values_list)
-        report,_=NTDReport.objects.get_or_create(reporter=reporter,parish=reporter.parish)
+        report,_=NTDReport.objects.get_or_create(reporter=reporter)
         report.number_of_communities_trac = int(values['No of communities and schools'])
         report.treated_lt_6_male_trac = int(values['Treated Less Than 6 Months male'])
         report.treated_lt_6_female_trac = int(values['Treated Less Than 6 Months female'])
@@ -245,7 +245,7 @@ def handle_treated_lyf(xform, submission, health_provider):
     values=pivot_dicts(values_list)
     reporter=Reporter.objects.get(healthprovider_ptr=health_provider)
     try:
-        report,_=NTDReport.objects.get_or_create(reporter=reporter,parish=reporter.parish)
+        report,_=NTDReport.objects.get_or_create(reporter=reporter)
         report.number_of_communities_lyf = int(values['No of communities and schools'])
         report.treated_lt_6_male_lyf = int(values['Treated Less Than 6 Months male'])
         report.treated_lt_6_female_lyf = int(values['Treated Less Than 6 Months female'])
@@ -283,7 +283,7 @@ def handle_treated_hel(xform, submission, health_provider):
     values_list=submission.submission_values().values("attribute__name","value_text")
     values=pivot_dicts(values_list)
     reporter=Reporter.objects.get(healthprovider_ptr=health_provider)
-    report,_=NTDReport.objects.get_or_create(reporter=reporter,parish=reporter.parish)
+    report,_=NTDReport.objects.get_or_create(reporter=reporter)
     try:
         report.number_of_communities_hel = int(values['No of communities and schools'])
         report.treated_lt_6_male_hel = int(values['Treated Less Than 6 Months male'])
@@ -326,7 +326,7 @@ def handle_treated_schi(xform, submission, health_provider):
     reporter=Reporter.objects.get(healthprovider_ptr=health_provider)
 
     try:
-        report,_=NTDReport.objects.get_or_create(reporter=reporter,parish=reporter.parish)
+        report,_=NTDReport.objects.get_or_create(reporter=reporter)
         report.number_of_communities_schi = int(values['No of communities and schools'])
 
         report.treated_lt_6_male_schi = int(values['Treated Less Than 6 Months male'])
@@ -368,7 +368,7 @@ def handle_treated_onch(xform, submission, health_provider):
     values=pivot_dicts(values_list)
     reporter=Reporter.objects.get(healthprovider_ptr=health_provider)
     try:
-        report,_=NTDReport.objects.get_or_create(reporter=reporter,parish=reporter.parish)
+        report,_=NTDReport.objects.get_or_create(reporter=reporter)
         report.number_of_communities_onch = int(values['No of communities and schools'])
         report.treated_lt_6_male_onch = int(values['Treated Less Than 6 Months male'])
         report.treated_lt_6_female_onch = int(values['Treated Less Than 6 Months female'])

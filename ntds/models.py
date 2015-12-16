@@ -28,7 +28,6 @@ class Translation(models.Model):
 
 class NTDReport(models.Model):
     reporter = models.ForeignKey("Reporter")
-    parish = models.ForeignKey(Location)
     xforms = models.ManyToManyField(XForm)
     population = models.IntegerField(max_length=10,default=0,blank=True)
     total_villages = models.IntegerField(max_length=10,default=0,blank=True)
@@ -271,8 +270,11 @@ class Reporter(HealthProvider):
     updated = models.DateTimeField(auto_now=True)
     parish_name=models.CharField(max_length=50)
     subcounty_name=models.CharField(max_length=50)
+    communities=models.ManyToManyField("Community")
 
-
+class Community(models.Model):
+    name = models.CharField(max_length=50)
+    type = models.CharField(max_length=50)
 
 class RegistrationPhase(models.Model):
     parish=models.ForeignKey(Location)
