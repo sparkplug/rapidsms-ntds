@@ -33,7 +33,7 @@ class Command(BaseCommand):
 
     def handle(self, **options):
         router=get_router()
-        messages = Message.objects.filter(text__istartswith="ntd")
+        messages = Message.objects.filter(text__istartswith="ntd",direction="I")
 
         for message in messages:
             txt=message.text.lower()
@@ -47,7 +47,7 @@ class Command(BaseCommand):
                 print "...............................",msg
             except ValueError:
                 print "Error................................................ ,",msg
-          
+
 
 
 
