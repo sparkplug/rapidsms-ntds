@@ -255,7 +255,7 @@ def handle_treated_lyf(xform, submission, health_provider):
         report.treated_4_to_14_female_lyf = int(values['Treated 5 to 14 female'])
         report.treated_gt_14_male_lyf = int(values['Treated greater than 15 male'])
         report.treated_gt_14_female_lyf = int(values['Treated greater than 15 female'])
-        report.lympatic=int(values['Treated 6 Months to 4 years female'])+int(values['Treated 6 Months to 4 years male'])+int(values['Treated Less Than 6 Months male'])+int(values['Treated Less Than 6 Months female'])+int(values['Treated 5 to 14 male'])+int(values['Treated 5 to 14 female'])+int(values['Treated greater than 15 male'])+int(values['Treated greater than 15 female'])
+        report.lymphatic=int(values['Treated 6 Months to 4 years female'])+int(values['Treated 6 Months to 4 years male'])+int(values['Treated Less Than 6 Months male'])+int(values['Treated Less Than 6 Months female'])+int(values['Treated 5 to 14 male'])+int(values['Treated 5 to 14 female'])+int(values['Treated greater than 15 male'])+int(values['Treated greater than 15 female'])
         report.save()
     except KeyError:
         submission.response="Your report Is incomplete.Please Resubmit"
