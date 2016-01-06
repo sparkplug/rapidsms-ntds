@@ -38,6 +38,5 @@ for rep in reporters:
     connection=rep.connection_set.all()[0]
     mobile =  "+"+connection.identity
     kwargs = {'metadata.name': rep.name, 'metadata.parish': rep.parish_name}
-    Message.objects.create(connection=connection,direction="O",status="Q",text=text)
-    beyonic.Payment.create(phonenumber=mobile,amount='3000', currency='UGX',payment_type='airtime',description='RTI-Envision Airtime money for reporting on NTDs', **kwargs)
+    beyonic.Payment.create(phonenumber=mobile,amount='7000', currency='UGX',payment_type='airtime',description='RTI-Envision Airtime money for reporting on NTDs', **kwargs)
 
