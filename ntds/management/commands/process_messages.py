@@ -50,7 +50,7 @@ class Command(BaseCommand):
 
             router.handle_incoming(message.connection.backend.name, message.connection.identity, msg)
             lastest=Message.objects.order_by("-pk")[0]
-            message.application=latest.pk
+            message.application=lastest.pk
             message.save()
             print "...............................",msg
         except ValueError:
