@@ -19,6 +19,7 @@ from rapidsms.models import Connection, Contact,Backend
 from optparse import make_option
 import django
 from rapidsms_httprouter.router import get_router
+from multiprocessing import Process
 
 class Command(BaseCommand):
     option_list = BaseCommand.option_list + (
@@ -31,22 +32,35 @@ class Command(BaseCommand):
         return msg
 
 
-    def handle(self, **options):
+    def process(self, message):
         router=get_router()
-        messages = Message.objects.filter(text__istartswith="ntd",direction="I")
+        txt=message.text.lower()
+        print txt
+        msg=txt.split("ntd")[1].strip()
+        try:
+            keyword,rest=msg.replace(" ",".").split(".",1)
+            rest=rest.strip().replace("o","0").replace(" ",".").replace("i","1").replace("t06969","").replace("0v","ov").replace("..",".").replace("to6969","")
+            msg=keyword+"."+rest
+            word_list=msg.split(".")
+            if len(word_list)==9:
+                word_list.insert(1,"1")
+                msg=".".join(word_list)
 
-        for message in messages:
-            txt=message.text.lower()
-            print txt
-            msg=txt.split("ntd")[1].strip()
-            try:
-                keyword,rest=msg.replace(" ",".").split(".",1)
-                rest=rest.strip().replace("o","0").replace(" ",".").replace("i","1").replace("t06969","").replace("to6969","")
-                msg=keyword+"."+rest
-                router.handle_incoming(message.connection.backend.name, message.connection.identity, msg)
-                print "...............................",msg
-            except ValueError:
-                print "Error................................................ ,",msg
+
+            router.handle_incoming(message.connection.backend.name, message.connection.identity, msg)
+            lastest=Message.objects.order_by("-pk")[0]
+            message.application=latest.pk
+            message.save()
+            print "...............................",msg
+        except ValueError:
+            print "Error................................................ ,",msg
+
+    def handle(self, **options):
+        from multiprocessing import Pool
+        messages = list(Message.objects.filter(text__istartswith="ntd",direction="I"))
+        map(self.process, messages)
+
+
 
 
 

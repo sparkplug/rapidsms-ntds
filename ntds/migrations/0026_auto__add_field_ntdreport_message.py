@@ -1,75 +1,23 @@
 # -*- coding: utf-8 -*-
 from south.utils import datetime_utils as datetime
 from south.db import db
-from south.v2 import DataMigration
+from south.v2 import SchemaMigration
 from django.db import models
 
-class Migration(DataMigration):
+
+class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        create_flat_loc="""
-
-
-        create view flat_loc as SELECT districts.name AS district,districts.id as district_id, subcounties.name AS subcounty,subcounties.id as subcounty_id,parishes.name as parish,parishes.id as parish_id  FROM locations_location AS districts, locations_location AS subcounties,locations_location as parishes
-        WHERE subcounties.lft BETWEEN districts.lft AND districts.rght AND subcounties.rght BETWEEN districts.lft AND districts.rght and parishes.lft BETWEEN subcounties.lft AND subcounties.rght AND subcounties.rght BETWEEN subcounties.lft AND subcounties.rght and subcounties.type_id in ('sub_county') and districts.type_id in ('district') and parishes.type_id in ('parish');
-        """
-        reporter_messages="""
-
-            create view reporter_messages as select * from (with reporter_messages as (SELECT U4."id" as connection_id ,message.id as message_id,message.text,message.direction,message.date,U4.identity,U3.name,reporter.* FROM "ntds_reporter" reporter INNER JOIN "healthmodels_healthprovider" U1 ON (reporter."healthprovider_ptr_id" = U1."healthproviderbase_ptr_id") INNER JOIN "healthmodels_healthproviderbase" U2 ON (U1."healthproviderbase_ptr_id" = U2."contact_ptr_id") INNER JOIN "rapidsms_contact" U3 ON (U2."contact_ptr_id" = U3."id") LEFT OUTER JOIN "rapidsms_connection" U4 ON (U3."id" = U4."contact_id") inner join rapidsms_httprouter_message message on U4.id = message.connection_id )
-            select reporter_messages.*,flat_loc.district,flat_loc.subcounty,flat_loc.parish  from reporter_messages left join flat_loc on reporter_messages.parish_id=flat_loc.parish_id order by date desc)t
-        """
-        reporters="""
-
-        create view ntds_reporters as SELECT U4."id" as connection_id ,flat_loc.district,reporter.parish_name as parish,reporter.subcounty_name as subcounty ,U4.identity,U3.name,reporter.* FROM "ntds_reporter" reporter INNER JOIN "healthmodels_healthprovider" U1 ON (reporter."healthprovider_ptr_id" = U1."healthproviderbase_ptr_id") INNER JOIN "healthmodels_healthproviderbase" U2 ON (U1."healthproviderbase_ptr_id" = U2."contact_ptr_id") INNER JOIN "rapidsms_contact" U3 ON (U2."contact_ptr_id" = U3."id") LEFT OUTER JOIN "rapidsms_connection" U4 ON (U3."id" = U4."contact_id") left join flat_loc on reporter.district_id=flat_loc.district_id
-        """
-        ntd_report= """
-                     create view ntds_report as SELECT ntds_ntdreport.*,U4."id" as connection_id ,flat_loc.district,flat_loc.district_id,flat_loc.subcounty_id,flat_loc.subcounty,flat_loc.parish ,U4.identity,U3.name FROM "ntds_reporter" reporter INNER JOIN "healthmodels_healthprovider" U1 ON (reporter."healthprovider_ptr_id" = U1."healthproviderbase_ptr_id") INNER JOIN "healthmodels_healthproviderbase" U2 ON (U1."healthproviderbase_ptr_id" = U2."contact_ptr_id") INNER JOIN "rapidsms_contact" U3 ON (U2."contact_ptr_id" = U3."id") LEFT OUTER JOIN "rapidsms_connection" U4 ON (U3."id" = U4."contact_id") left join flat_loc on reporter.parish_id=flat_loc.parish_id join ntds_ntdreport on ntds_ntdreport.reporter_id  = reporter.healthprovider_ptr_id order by ntds_ntdreport.created desc;
-
-                    """
-        disease_report="""
-
-                create view diseases_report as select 'Trachoma' as disease,sum( "treated_lt_6_male_trac") as treated_lt_6_male,sum("number_of_communities_trac") as no_of_communities,sum("treated_lt_6_female_trac")as treated_lt_6_female, sum("treated_6_to_4_male_trac") as treated_6_to_4_male,sum("treated_6_to_4_female_trac") as treated_6_to_4_female,sum( "treated_4_to_14_male_trac") as treated_4_to_14_male,sum("treated_4_to_14_female_trac") as treated_4_to_14_female ,sum("treated_gt_14_male_trac") as treated_gt_14_male,sum("treated_gt_14_female_trac") as treated_gt_14_female,sum("trachoma") as total from ntds_report union all
-
-        select 'Helminthiasis' as disease,sum( "treated_lt_6_male_hel") as treated_lt_6_male,sum("number_of_communities_hel") as no_of_communities,sum("treated_lt_6_female_hel") as treated_lt_6_female, sum("treated_6_to_4_male_hel") as treated_6_to_4_male,sum("treated_6_to_4_female_hel") as treated_6_to_4_female,sum( "treated_4_to_14_male_hel") as treated_4_to_14_male,sum("treated_4_to_14_female_hel") as treated_4_to_14_female ,sum("treated_gt_14_male_hel") as treated_gt_14_male,sum("treated_gt_14_female_hel") as treated_gt_14_female,sum("helminthiasis") as total from ntds_report union all
-
-        select 'Onchocerciasis' as disease,sum( "treated_lt_6_male_onch") as treated_lt_6_male,sum("number_of_communities_onch") as no_of_communities,sum("treated_lt_6_female_onch") as treated_lt_6_female, sum("treated_6_to_4_male_onch") as treated_6_to_4_male,sum("treated_6_to_4_female_onch") as treated_6_to_4_female,sum( "treated_4_to_14_male_onch") as treated_4_to_14_male,sum("treated_4_to_14_female_onch") as treated_4_to_14_female ,sum("treated_gt_14_male_onch") as treated_gt_14_male,sum("treated_gt_14_female_onch") as treated_gt_14_female,sum("onchocerciasis") as total from ntds_report union all
-
-        select 'Schistosomiasis' as disease,sum( "treated_lt_6_male_schi") as treated_lt_6_male,sum("number_of_communities_schi") as no_of_communities,sum("treated_lt_6_female_schi") as treated_lt_6_female, sum("treated_6_to_4_male_schi") as treated_6_to_4_male,sum("treated_6_to_4_female_schi") as treated_6_to_4_female,sum( "treated_4_to_14_male_schi") as treated_4_to_14_male,sum("treated_4_to_14_female_schi") as treated_4_to_14_female ,sum("treated_gt_14_male_schi") as treated_gt_14_male,sum("treated_gt_14_female_schi") as treated_gt_14_female,sum("schistosomiasis") as total from ntds_report union all
-
-        select 'Lymphatic' as disease,sum( "treated_lt_6_male_lyf") as treated_lt_6_male,sum("number_of_communities_lyf") as no_of_communities,sum("treated_lt_6_female_lyf") as treated_lt_6_female, sum("treated_6_to_4_male_lyf") as treated_6_to_4_male,sum("treated_6_to_4_female_lyf") as treated_6_to_4_female,sum( "treated_4_to_14_male_lyf") as treated_4_to_14_male,sum("treated_4_to_14_female_lyf") as treated_4_to_14_female ,sum("treated_gt_14_male_lyf") as treated_gt_14_male,sum("treated_gt_14_female_lyf") as treated_gt_14_female,sum("lymphatic") as total from ntds_report union all
-
-        select 'Filariasis' as disease,sum( "treated_lt_6_male_fil") as treated_lt_6_male,sum("number_of_communities_fil") as no_of_communities,sum("treated_lt_6_female_fil")as treated_lt_6_female, sum("treated_6_to_4_male_fil") as treated_6_to_4_male,sum("treated_6_to_4_female_fil") as treated_6_to_4_female,sum( "treated_4_to_14_male_fil") as treated_4_to_14_male,sum("treated_4_to_14_female_fil") as treated_4_to_14_female ,sum("treated_gt_14_male_fil") as treated_gt_14_male,sum("treated_gt_14_female_fil") as treated_gt_14_female,sum("filariasis") as total from ntds_report
-
-        """
-
-        district_report="""
-
-
-        create view districts_report as select 'Trachoma' as disease,district,district_id,sum( "treated_lt_6_male_trac") as treated_lt_6_male,sum("number_of_communities_trac") as no_of_communities,sum("treated_lt_6_female_trac")as treated_lt_6_female, sum("treated_6_to_4_male_trac") as treated_6_to_4_male,sum("treated_6_to_4_female_trac") as treated_6_to_4_female,sum( "treated_4_to_14_male_trac") as treated_4_to_14_male,sum("treated_4_to_14_female_trac") as treated_4_to_14_female ,sum("treated_gt_14_male_trac") as treated_gt_14_male,sum("treated_gt_14_female_trac") as treated_gt_14_female,sum("trachoma") as total from ntds_report group by district_id,district  union all
-
-        select 'Helminthiasis' as disease,district,district_id,sum( "treated_lt_6_male_hel") as treated_lt_6_male,sum("number_of_communities_hel") as no_of_communities,sum("treated_lt_6_female_hel") as treated_lt_6_female, sum("treated_6_to_4_male_hel") as treated_6_to_4_male,sum("treated_6_to_4_female_hel") as treated_6_to_4_female,sum( "treated_4_to_14_male_hel") as treated_4_to_14_male,sum("treated_4_to_14_female_hel") as treated_4_to_14_female ,sum("treated_gt_14_male_hel") as treated_gt_14_male,sum("treated_gt_14_female_hel") as treated_gt_14_female,sum("helminthiasis") as total from ntds_report group by district_id,district  union all
-
-        select 'Onchocerciasis' as disease,district,district_id,sum( "treated_lt_6_male_onch") as treated_lt_6_male,sum("number_of_communities_onch") as no_of_communities,sum("treated_lt_6_female_onch") as treated_lt_6_female, sum("treated_6_to_4_male_onch") as treated_6_to_4_male,sum("treated_6_to_4_female_onch") as treated_6_to_4_female,sum( "treated_4_to_14_male_onch") as treated_4_to_14_male,sum("treated_4_to_14_female_onch") as treated_4_to_14_female ,sum("treated_gt_14_male_onch") as treated_gt_14_male,sum("treated_gt_14_female_onch") as treated_gt_14_female,sum("onchocerciasis") as total from ntds_report group by district_id,district  union all
-
-        select 'Schistosomiasis' as disease,district,district_id,sum( "treated_lt_6_male_schi") as treated_lt_6_male,sum("number_of_communities_schi") as no_of_communities,sum("treated_lt_6_female_schi") as treated_lt_6_female, sum("treated_6_to_4_male_schi") as treated_6_to_4_male,sum("treated_6_to_4_female_schi") as treated_6_to_4_female,sum( "treated_4_to_14_male_schi") as treated_4_to_14_male,sum("treated_4_to_14_female_schi") as treated_4_to_14_female ,sum("treated_gt_14_male_schi") as treated_gt_14_male,sum("treated_gt_14_female_schi") as treated_gt_14_female,sum("schistosomiasis") as total from ntds_report group by district_id,district union all
-
-        select 'Lymphatic' as disease,district,district_id,sum( "treated_lt_6_male_lyf") as treated_lt_6_male,sum("number_of_communities_lyf") as no_of_communities,sum("treated_lt_6_female_lyf")as treated_lt_6_female, sum("treated_6_to_4_male_lyf") as treated_6_to_4_male,sum("treated_6_to_4_female_lyf") as treated_6_to_4_female,sum( "treated_4_to_14_male_lyf") as treated_4_to_14_male,sum("treated_4_to_14_female_lyf") as treated_4_to_14_female ,sum("treated_gt_14_male_lyf") as treated_gt_14_male,sum("treated_gt_14_female_lyf") as treated_gt_14_female,sum("lymphatic") as total from ntds_report group by district_id,district union all
-
-        select 'Filariasis' as disease,district,district_id,sum( "treated_lt_6_male_fil") as treated_lt_6_male,sum("number_of_communities_fil") as no_of_communities,sum("treated_lt_6_female_fil")as treated_lt_6_female, sum("treated_6_to_4_male_fil") as treated_6_to_4_male,sum("treated_6_to_4_female_fil") as treated_6_to_4_female,sum( "treated_4_to_14_male_fil") as treated_4_to_14_male,sum("treated_4_to_14_female_fil") as treated_4_to_14_female ,sum("treated_gt_14_male_fil") as treated_gt_14_male,sum("treated_gt_14_female_fil") as treated_gt_14_female,sum("filariasis") as total from ntds_report  group by district_id,district
-        """
-        db.execute(create_flat_loc)
-        db.execute(reporter_messages)
-        db.execute(reporters)
-        db.execute(ntd_report)
-        db.execute(disease_report)
-        db.execute(district_report)
-        # Note: Don't use "from appname.models import ModelName".
-        # Use orm.ModelName to refer to models in this application,
-        # and orm['appname.ModelName'] for models in other applications.
+        # Adding field 'NTDReport.message'
+        db.add_column('ntds_ntdreport', 'message',
+                      self.gf('django.db.models.fields.CharField')(default='', max_length=500),
+                      keep_default=False)
 
 
     def backwards(self, orm):
-        "Write your backwards methods here."
+        # Deleting field 'NTDReport.message'
+        db.delete_column('ntds_ntdreport', 'message')
+
 
     models = {
         'auth.group': {
@@ -285,6 +233,12 @@ class Migration(DataMigration):
             'default_monthly_consumptions': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': "orm['logistics.Product']", 'null': 'True', 'through': "orm['logistics.DefaultMonthlyConsumption']", 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
+        'ntds.community': {
+            'Meta': {'object_name': 'Community'},
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
+            'type': ('django.db.models.fields.CharField', [], {'max_length': '50'})
+        },
         'ntds.disease': {
             'Meta': {'object_name': 'Disease'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
@@ -338,6 +292,7 @@ class Migration(DataMigration):
             'mbd_received': ('django.db.models.fields.IntegerField', [], {'default': '0', 'max_length': '10', 'blank': 'True'}),
             'mbd_used': ('django.db.models.fields.IntegerField', [], {'default': '0', 'max_length': '10', 'blank': 'True'}),
             'mbd_wasted': ('django.db.models.fields.IntegerField', [], {'default': '0', 'max_length': '10', 'blank': 'True'}),
+            'message': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '500'}),
             'number_of_communities_fil': ('django.db.models.fields.IntegerField', [], {'default': '0', 'max_length': '10', 'blank': 'True'}),
             'number_of_communities_hel': ('django.db.models.fields.IntegerField', [], {'default': '0', 'max_length': '10', 'blank': 'True'}),
             'number_of_communities_lyf': ('django.db.models.fields.IntegerField', [], {'default': '0', 'max_length': '10', 'blank': 'True'}),
@@ -345,7 +300,6 @@ class Migration(DataMigration):
             'number_of_communities_schi': ('django.db.models.fields.IntegerField', [], {'default': '0', 'max_length': '10', 'blank': 'True'}),
             'number_of_communities_trac': ('django.db.models.fields.IntegerField', [], {'default': '0', 'max_length': '10', 'blank': 'True'}),
             'onchocerciasis': ('django.db.models.fields.IntegerField', [], {'default': '0', 'max_length': '10', 'blank': 'True'}),
-            'parish': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['locations.Location']"}),
             'pop_4_to_14_female': ('django.db.models.fields.IntegerField', [], {'default': '0', 'max_length': '10', 'blank': 'True'}),
             'pop_4_to_14_female_fil': ('django.db.models.fields.IntegerField', [], {'default': '0', 'max_length': '10', 'blank': 'True'}),
             'pop_4_to_14_female_hel': ('django.db.models.fields.IntegerField', [], {'default': '0', 'max_length': '10', 'blank': 'True'}),
@@ -502,12 +456,22 @@ class Migration(DataMigration):
         },
         'ntds.reporter': {
             'Meta': {'object_name': 'Reporter', '_ormbases': ['healthmodels.HealthProvider']},
+            'communities': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['ntds.Community']", 'symmetrical': 'False'}),
+            'community': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
+            'county': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'district': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'districts'", 'null': 'True', 'to': "orm['locations.Location']"}),
+            'health_subcounty': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
             'healthprovider_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['healthmodels.HealthProvider']", 'unique': 'True', 'primary_key': 'True'}),
+            'id_number': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
             'parish': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'parish'", 'null': 'True', 'to': "orm['locations.Location']"}),
+            'parish_name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
+            'region': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
             'reporting_area': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['locations.Location']", 'symmetrical': 'False'}),
             'subcounty': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'subcounties'", 'null': 'True', 'to': "orm['locations.Location']"}),
+            'subcounty_name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
+            'subcounty_supervisor': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
+            'subcounty_supervisor_mobile': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
             'updated': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'})
         },
         'ntds.reportprogress': {
@@ -652,4 +616,3 @@ class Migration(DataMigration):
     }
 
     complete_apps = ['ntds']
-    symmetrical = True

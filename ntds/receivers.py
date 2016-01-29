@@ -8,6 +8,8 @@ from django.contrib.auth.models import  Group
 from django.db.models import F
 from .utils import parse_location
 from .models import Reporter,ReportProgress,NTDReport,NtdLocation
+import json
+from django.db import transaction
 
 
 
@@ -160,18 +162,23 @@ def handle_treated_fil(xform, submission, health_provider):
     values=pivot_dicts(values_list)
     reporter=Reporter.objects.get(healthprovider_ptr=health_provider)
     try:
-
-        report,_=NTDReport.objects.get_or_create(reporter=reporter)
-        report.number_of_communities_fil = int(values['No of communities and schools'])
-        report.treated_lt_6_male_fil = int(values['Treated Less Than 6 Months male'])
-        report.treated_lt_6_female_fil = int(values['Treated Less Than 6 Months female'])
-        report.treated_6_to_4_male_fil = int(values['Treated 6 Months to 4 years male'])
-        report.treated_6_to_4_female_fil = int(values['Treated 6 Months to 4 years female'])
-        report.treated_4_to_14_male_fil = int(values['Treated 5 to 14 male'])
-        report.treated_4_to_14_female_fil = int(values['Treated 5 to 14 female'])
-        report.treated_gt_14_male_fil = int(values['Treated greater than 15 male'])
-        report.treated_gt_14_female_fil = int(values['Treated greater than 15 female'])
-        report.filariasis=int(values['Treated 6 Months to 4 years female'])+int(values['Treated 6 Months to 4 years male'])+int(values['Treated Less Than 6 Months male'])+int(values['Treated Less Than 6 Months female'])+int(values['Treated 5 to 14 male'])+int(values['Treated 5 to 14 female'])+int(values['Treated greater than 15 male'])+int(values['Treated greater than 15 female'])
+        with transaction.commit_manually():
+            report=NTDReport.objects.create(reporter=reporter)
+            report.message=submission.message.text
+            report.raw = json.dumps(values)
+            report.disease="Filiariasis"
+            report.number_of_communities_fil = int(values['No of communities and schools'])
+            report.treated_lt_6_male_fil = int(values['Treated Less Than 6 Months male'])
+            report.treated_lt_6_female_fil = int(values['Treated Less Than 6 Months female'])
+            report.treated_6_to_4_male_fil = int(values['Treated 6 Months to 4 years male'])
+            report.treated_6_to_4_female_fil = int(values['Treated 6 Months to 4 years female'])
+            report.treated_4_to_14_male_fil = int(values['Treated 5 to 14 male'])
+            report.treated_4_to_14_female_fil = int(values['Treated 5 to 14 female'])
+            report.treated_gt_14_male_fil = int(values['Treated greater than 15 male'])
+            report.treated_gt_14_female_fil = int(values['Treated greater than 15 female'])
+            report.filariasis=int(values['Treated 6 Months to 4 years female'])+int(values['Treated 6 Months to 4 years male'])+int(values['Treated Less Than 6 Months male'])+int(values['Treated Less Than 6 Months female'])+int(values['Treated 5 to 14 male'])+int(values['Treated 5 to 14 female'])+int(values['Treated greater than 15 male'])+int(values['Treated greater than 15 female'])
+            report.save()
+            transaction.commit()
     except KeyError:
         submission.response="Your report Is incomplete.Please Resubmit"
         submission.has_errors=True
@@ -185,6 +192,7 @@ def  handle_pop_trac(xform, submission, health_provider):
     values_list=submission.submission_values().values("attribute__name","value_text")
     values=pivot_dicts(values_list)
     report=NTDReport.objects.create(reporter=reporter)
+    report.message=submission.message.text
     report_in_progress = ReportProgress.objects.filter(reporter=reporter,status=1).order_by("-updated")[0]
     report=report_in_progress.report
     report.pop_lt_6_male_trac = int(values['Pop Less Than 6 Months male'])
@@ -202,21 +210,26 @@ def handle_treated_trac(xform, submission, health_provider):
     from .models import ReportProgress,NtdLocation
     values_list=submission.submission_values().values("attribute__name","value_text")
     try:
-        reporter=Reporter.objects.get(healthprovider_ptr=health_provider)
+        with transaction.commit_manually():
+            reporter=Reporter.objects.get(healthprovider_ptr=health_provider)
 
-        values=pivot_dicts(values_list)
-        report,_=NTDReport.objects.get_or_create(reporter=reporter)
-        report.number_of_communities_trac = int(values['No of communities and schools'])
-        report.treated_lt_6_male_trac = int(values['Treated Less Than 6 Months male'])
-        report.treated_lt_6_female_trac = int(values['Treated Less Than 6 Months female'])
-        report.treated_6_to_4_male_trac = int(values['Treated 6 Months to 4 years male'])
-        report.treated_6_to_4_female_trac = int(values['Treated 6 Months to 4 years female'])
-        report.treated_4_to_14_male_trac = int(values['Treated 5 to 14 male'])
-        report.treated_4_to_14_female_trac = int(values['Treated 5 to 14 female'])
-        report.treated_gt_14_male_trac = int(values['Treated greater than 15 male'])
-        report.treated_gt_14_female_trac = int(values['Treated greater than 15 female'])
-        report.trachoma=int(values['Treated 6 Months to 4 years female'])+int(values['Treated 6 Months to 4 years male'])+int(values['Treated Less Than 6 Months male'])+int(values['Treated Less Than 6 Months female'])+int(values['Treated 5 to 14 male'])+int(values['Treated 5 to 14 female'])+int(values['Treated greater than 15 male'])+int(values['Treated greater than 15 female'])
-        report.save()
+            values=pivot_dicts(values_list)
+            reportNTDReport.objects.create(reporter=reporter)
+            report.raw = json.dumps(values)
+            report.disease="Trachoma"
+            report.message=submission.message.text
+            report.number_of_communities_trac = int(values['No of communities and schools'])
+            report.treated_lt_6_male_trac = int(values['Treated Less Than 6 Months male'])
+            report.treated_lt_6_female_trac = int(values['Treated Less Than 6 Months female'])
+            report.treated_6_to_4_male_trac = int(values['Treated 6 Months to 4 years male'])
+            report.treated_6_to_4_female_trac = int(values['Treated 6 Months to 4 years female'])
+            report.treated_4_to_14_male_trac = int(values['Treated 5 to 14 male'])
+            report.treated_4_to_14_female_trac = int(values['Treated 5 to 14 female'])
+            report.treated_gt_14_male_trac = int(values['Treated greater than 15 male'])
+            report.treated_gt_14_female_trac = int(values['Treated greater than 15 female'])
+            report.trachoma=int(values['Treated 6 Months to 4 years female'])+int(values['Treated 6 Months to 4 years male'])+int(values['Treated Less Than 6 Months male'])+int(values['Treated Less Than 6 Months female'])+int(values['Treated 5 to 14 male'])+int(values['Treated 5 to 14 female'])+int(values['Treated greater than 15 male'])+int(values['Treated greater than 15 female'])
+            report.save()
+            transaction.commit()
     except KeyError:
         submission.response="Your report Is incomplete.Please Resubmit"
         submission.has_errors=True
@@ -245,18 +258,23 @@ def handle_treated_lyf(xform, submission, health_provider):
     values=pivot_dicts(values_list)
     reporter=Reporter.objects.get(healthprovider_ptr=health_provider)
     try:
-        report,_=NTDReport.objects.get_or_create(reporter=reporter)
-        report.number_of_communities_lyf = int(values['No of communities and schools'])
-        report.treated_lt_6_male_lyf = int(values['Treated Less Than 6 Months male'])
-        report.treated_lt_6_female_lyf = int(values['Treated Less Than 6 Months female'])
-        report.treated_6_to_4_male_lyf = int(values['Treated 6 Months to 4 years male'])
-        report.treated_6_to_4_female_lyf = int(values['Treated 6 Months to 4 years female'])
-        report.treated_4_to_14_male_lyf = int(values['Treated 5 to 14 male'])
-        report.treated_4_to_14_female_lyf = int(values['Treated 5 to 14 female'])
-        report.treated_gt_14_male_lyf = int(values['Treated greater than 15 male'])
-        report.treated_gt_14_female_lyf = int(values['Treated greater than 15 female'])
-        report.lymphatic=int(values['Treated 6 Months to 4 years female'])+int(values['Treated 6 Months to 4 years male'])+int(values['Treated Less Than 6 Months male'])+int(values['Treated Less Than 6 Months female'])+int(values['Treated 5 to 14 male'])+int(values['Treated 5 to 14 female'])+int(values['Treated greater than 15 male'])+int(values['Treated greater than 15 female'])
-        report.save()
+        with transaction.commit_manually():
+            report=NTDReport.objects.create(reporter=reporter)
+            report.message=submission.message.text
+            report.raw = json.dumps(values)
+            report.disease="Lympatic"
+            report.number_of_communities_lyf = int(values['No of communities and schools'])
+            report.treated_lt_6_male_lyf = int(values['Treated Less Than 6 Months male'])
+            report.treated_lt_6_female_lyf = int(values['Treated Less Than 6 Months female'])
+            report.treated_6_to_4_male_lyf = int(values['Treated 6 Months to 4 years male'])
+            report.treated_6_to_4_female_lyf = int(values['Treated 6 Months to 4 years female'])
+            report.treated_4_to_14_male_lyf = int(values['Treated 5 to 14 male'])
+            report.treated_4_to_14_female_lyf = int(values['Treated 5 to 14 female'])
+            report.treated_gt_14_male_lyf = int(values['Treated greater than 15 male'])
+            report.treated_gt_14_female_lyf = int(values['Treated greater than 15 female'])
+            report.lymphatic=int(values['Treated 6 Months to 4 years female'])+int(values['Treated 6 Months to 4 years male'])+int(values['Treated Less Than 6 Months male'])+int(values['Treated Less Than 6 Months female'])+int(values['Treated 5 to 14 male'])+int(values['Treated 5 to 14 female'])+int(values['Treated greater than 15 male'])+int(values['Treated greater than 15 female'])
+            report.save()
+            transaction.commit()
     except KeyError:
         submission.response="Your report Is incomplete.Please Resubmit"
         submission.has_errors=True
@@ -283,19 +301,25 @@ def handle_treated_hel(xform, submission, health_provider):
     values_list=submission.submission_values().values("attribute__name","value_text")
     values=pivot_dicts(values_list)
     reporter=Reporter.objects.get(healthprovider_ptr=health_provider)
-    report,_=NTDReport.objects.get_or_create(reporter=reporter)
+
     try:
-        report.number_of_communities_hel = int(values['No of communities and schools'])
-        report.treated_lt_6_male_hel = int(values['Treated Less Than 6 Months male'])
-        report.treated_lt_6_female_hel = int(values['Treated Less Than 6 Months female'])
-        report.treated_6_to_4_male_hel = int(values['Treated 6 Months to 4 years male'])
-        report.treated_6_to_4_female_hel = int(values['Treated 6 Months to 4 years female'])
-        report.treated_4_to_14_male_hel = int(values['Treated 5 to 14 male'])
-        report.treated_4_to_14_female_hel = int(values['Treated 5 to 14 female'])
-        report.treated_gt_14_male_hel = int(values['Treated greater than 15 male'])
-        report.treated_gt_14_female_hel = int(values['Treated greater than 15 female'])
-        report.helminthiasis=int(values['Treated 6 Months to 4 years female'])+int(values['Treated 6 Months to 4 years male'])+int(values['Treated Less Than 6 Months male'])+int(values['Treated Less Than 6 Months female'])+int(values['Treated 5 to 14 male'])+int(values['Treated 5 to 14 female'])+int(values['Treated greater than 15 male'])+int(values['Treated greater than 15 female'])
-        report.save()
+        with transaction.commit_manually():
+            report.message=submission.message.text
+            report=NTDReport.objects.create(reporter=reporter)
+            report.raw = json.dumps(values)
+            report.disease="Filiariasis"
+            report.number_of_communities_hel = int(values['No of communities and schools'])
+            report.treated_lt_6_male_hel = int(values['Treated Less Than 6 Months male'])
+            report.treated_lt_6_female_hel = int(values['Treated Less Than 6 Months female'])
+            report.treated_6_to_4_male_hel = int(values['Treated 6 Months to 4 years male'])
+            report.treated_6_to_4_female_hel = int(values['Treated 6 Months to 4 years female'])
+            report.treated_4_to_14_male_hel = int(values['Treated 5 to 14 male'])
+            report.treated_4_to_14_female_hel = int(values['Treated 5 to 14 female'])
+            report.treated_gt_14_male_hel = int(values['Treated greater than 15 male'])
+            report.treated_gt_14_female_hel = int(values['Treated greater than 15 female'])
+            report.helminthiasis=int(values['Treated 6 Months to 4 years female'])+int(values['Treated 6 Months to 4 years male'])+int(values['Treated Less Than 6 Months male'])+int(values['Treated Less Than 6 Months female'])+int(values['Treated 5 to 14 male'])+int(values['Treated 5 to 14 female'])+int(values['Treated greater than 15 male'])+int(values['Treated greater than 15 female'])
+            report.save()
+            transaction.commit()
     except KeyError:
         submission.response="Your report Is incomplete.Please Resubmit"
         submission.has_errors=True
@@ -320,25 +344,30 @@ def  handle_pop_schi(xform, submission, reporter):
     return True
 
 def handle_treated_schi(xform, submission, health_provider):
+
     from .models import ReportProgress
     values_list=submission.submission_values().values("attribute__name","value_text")
     values=pivot_dicts(values_list)
     reporter=Reporter.objects.get(healthprovider_ptr=health_provider)
 
     try:
-        report,_=NTDReport.objects.get_or_create(reporter=reporter)
-        report.number_of_communities_schi = int(values['No of communities and schools'])
-
-        report.treated_lt_6_male_schi = int(values['Treated Less Than 6 Months male'])
-        report.treated_lt_6_female_schi = int(values['Treated Less Than 6 Months female'])
-        report.treated_6_to_4_male_schi = int(values['Treated 6 Months to 4 years male'])
-        report.treated_6_to_4_female_schi = int(values['Treated 6 Months to 4 years female'])
-        report.treated_4_to_14_male_schi = int(values['Treated 5 to 14 male'])
-        report.treated_4_to_14_female_schi = int(values['Treated 5 to 14 female'])
-        report.treated_gt_14_male_schi = int(values['Treated greater than 15 male'])
-        report.treated_gt_14_female_schi = int(values['Treated greater than 15 female'])
-        report.schistosomiasis=int(values['Treated 6 Months to 4 years female'])+int(values['Treated 6 Months to 4 years male'])+int(values['Treated Less Than 6 Months male'])+int(values['Treated Less Than 6 Months female'])+int(values['Treated 5 to 14 male'])+int(values['Treated 5 to 14 female'])+int(values['Treated greater than 15 male'])+int(values['Treated greater than 15 female'])
-        report.save()
+        with transaction.commit_manually():
+            report=NTDReport.objects.create(reporter=reporter)
+            report.raw = json.dumps(values)
+            report.disease="Schistosomiasis"
+            report.number_of_communities_schi = int(values['No of communities and schools'])
+            report.message=submission.message.text
+            report.treated_lt_6_male_schi = int(values['Treated Less Than 6 Months male'])
+            report.treated_lt_6_female_schi = int(values['Treated Less Than 6 Months female'])
+            report.treated_6_to_4_male_schi = int(values['Treated 6 Months to 4 years male'])
+            report.treated_6_to_4_female_schi = int(values['Treated 6 Months to 4 years female'])
+            report.treated_4_to_14_male_schi = int(values['Treated 5 to 14 male'])
+            report.treated_4_to_14_female_schi = int(values['Treated 5 to 14 female'])
+            report.treated_gt_14_male_schi = int(values['Treated greater than 15 male'])
+            report.treated_gt_14_female_schi = int(values['Treated greater than 15 female'])
+            report.schistosomiasis=int(values['Treated 6 Months to 4 years female'])+int(values['Treated 6 Months to 4 years male'])+int(values['Treated Less Than 6 Months male'])+int(values['Treated Less Than 6 Months female'])+int(values['Treated 5 to 14 male'])+int(values['Treated 5 to 14 female'])+int(values['Treated greater than 15 male'])+int(values['Treated greater than 15 female'])
+            report.save()
+            transaction.commit()
     except KeyError:
         submission.response="Your report Is incomplete.Please Resubmit"
         submission.has_errors=True
@@ -368,18 +397,23 @@ def handle_treated_onch(xform, submission, health_provider):
     values=pivot_dicts(values_list)
     reporter=Reporter.objects.get(healthprovider_ptr=health_provider)
     try:
-        report,_=NTDReport.objects.get_or_create(reporter=reporter)
-        report.number_of_communities_onch = int(values['No of communities and schools'])
-        report.treated_lt_6_male_onch = int(values['Treated Less Than 6 Months male'])
-        report.treated_lt_6_female_onch = int(values['Treated Less Than 6 Months female'])
-        report.treated_6_to_4_male_onch = int(values['Treated 6 Months to 4 years male'])
-        report.treated_6_to_4_female_onch = int(values['Treated 6 Months to 4 years female'])
-        report.treated_4_to_14_male_onch = int(values['Treated 5 to 14 male'])
-        report.treated_4_to_14_female_onch = int(values['Treated 5 to 14 female'])
-        report.treated_gt_14_male_onch = int(values['Treated greater than 15 male'])
-        report.treated_gt_14_female_onch = int(values['Treated greater than 15 female'])
-        report.onchocerciasis=int(values['Treated 6 Months to 4 years female'])+int(values['Treated 6 Months to 4 years male'])+int(values['Treated Less Than 6 Months male'])+int(values['Treated Less Than 6 Months female'])+int(values['Treated 5 to 14 male'])+int(values['Treated 5 to 14 female'])+int(values['Treated greater than 15 male'])+int(values['Treated greater than 15 female'])
-        report.save()
+        with transaction.commit_manually():
+            report=NTDReport.objects.create(reporter=reporter)
+            report.message=submission.message.text
+            report.raw = json.dumps(values)
+            report.disease="Onchocerciasis"
+            report.number_of_communities_onch = int(values['No of communities and schools'])
+            report.treated_lt_6_male_onch = int(values['Treated Less Than 6 Months male'])
+            report.treated_lt_6_female_onch = int(values['Treated Less Than 6 Months female'])
+            report.treated_6_to_4_male_onch = int(values['Treated 6 Months to 4 years male'])
+            report.treated_6_to_4_female_onch = int(values['Treated 6 Months to 4 years female'])
+            report.treated_4_to_14_male_onch = int(values['Treated 5 to 14 male'])
+            report.treated_4_to_14_female_onch = int(values['Treated 5 to 14 female'])
+            report.treated_gt_14_male_onch = int(values['Treated greater than 15 male'])
+            report.treated_gt_14_female_onch = int(values['Treated greater than 15 female'])
+            report.onchocerciasis=int(values['Treated 6 Months to 4 years female'])+int(values['Treated 6 Months to 4 years male'])+int(values['Treated Less Than 6 Months male'])+int(values['Treated Less Than 6 Months female'])+int(values['Treated 5 to 14 male'])+int(values['Treated 5 to 14 female'])+int(values['Treated greater than 15 male'])+int(values['Treated greater than 15 female'])
+            report.save()
+            transaction.commit()
         return (xform, submission, reporter,False)
     except KeyError:
         submission.response="Your report Is incomplete.Please Resubmit"

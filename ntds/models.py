@@ -29,6 +29,9 @@ class Translation(models.Model):
 class NTDReport(models.Model):
     reporter = models.ForeignKey("Reporter")
     xforms = models.ManyToManyField(XForm)
+    message = models.CharField(max_length=500,default="")
+    disease = models.CharField(max_length=500,default="")
+    raw = models.TextField(default="")
     population = models.IntegerField(max_length=10,default=0,blank=True)
     total_villages = models.IntegerField(max_length=10,default=0,blank=True)
     villages_targeted = models.IntegerField(max_length=10,default=0,blank=True)
