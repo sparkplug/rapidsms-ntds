@@ -34,7 +34,7 @@ class Command(BaseCommand):
 
     def process(self, message):
         print message.pk
-        start=options['start']
+
         router=get_router()
         txt=message.text.lower()
         print txt
@@ -59,6 +59,7 @@ class Command(BaseCommand):
 
     def handle(self, **options):
         from multiprocessing import Pool
+        start=options['start']
         messages = list(Message.objects.filter(text__istartswith="ntd").filter(direction="I").filter(pk__gt=int(start)).order_by("pk"))
         map(self.process, messages)
 
