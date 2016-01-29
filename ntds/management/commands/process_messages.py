@@ -23,7 +23,7 @@ from multiprocessing import Process
 
 class Command(BaseCommand):
     option_list = BaseCommand.option_list + (
-        make_option('-f', '--file', dest='file'),)
+        make_option('-s', '--start', dest='start'),)
 
 
     def fakeIncoming(self, message, connection=None):
@@ -34,6 +34,7 @@ class Command(BaseCommand):
 
     def process(self, message):
         print message.pk
+        start=options['start']
         router=get_router()
         txt=message.text.lower()
         print txt
@@ -58,7 +59,7 @@ class Command(BaseCommand):
 
     def handle(self, **options):
         from multiprocessing import Pool
-        messages = list(Message.objects.filter(text__istartswith="ntd",direction="I").order_by("pk"))
+        messages = list(Message.objects.filter(text__istartswith="ntd").filter(direction="I").filter(pk__gt=int(start)).order_by("pk"))
         map(self.process, messages)
 
 
