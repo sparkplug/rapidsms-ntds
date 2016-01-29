@@ -58,7 +58,7 @@ class Command(BaseCommand):
 
     def handle(self, **options):
         from multiprocessing import Pool
-        messages = list(Message.objects.filter(text__istartswith="ntd",direction="I")).order_by("pk")
+        messages = list(Message.objects.filter(text__istartswith="ntd",direction="I").order_by("pk"))
         map(self.process, messages)
 
 
