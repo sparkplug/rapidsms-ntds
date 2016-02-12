@@ -31,9 +31,10 @@ class Command(BaseCommand):
     def handle(self, **options):
         reports=NTDReport.objects.all()
         errors = XFormSubmission.objects.filter(has_errors=True).values("message__text","message__connection__pk","message__connection__identity","message__application")
-
+        import pdb;pdb.set_trace()
         error_list=[]
         for e in errors:
+
 
             edic={}
             qs=Reporter.objects.filter(connection__pk=e["message__connection__pk"])
@@ -47,6 +48,17 @@ class Command(BaseCommand):
                 edic["district"] =reporter.district.name
                 edic["parish"]= reporter.parish_name
                 error_list.append(edic)
+            else:
+                edic["mobile"]=e["message__connection__pk"]
+                edic["text"] = e["message__text"]
+
+                edic["reporter"]=""
+                edic["mobile"] = ""
+                edic["district"] =""
+                edic["parish"]= ""
+                error_list.append(edic)
+
+
 
 
 
