@@ -31,7 +31,7 @@ class Command(BaseCommand):
     def handle(self, **options):
         reports=NTDReport.objects.all()
         errors = XFormSubmission.objects.filter(has_errors=True).values("message__text","message__connection__pk","message__connection__identity","message__application")
-        import pdb;pdb.set_trace()
+        
         error_list=[]
         for e in errors:
 
