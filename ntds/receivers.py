@@ -165,7 +165,7 @@ def handle_treated_fil(xform, submission, health_provider):
         report=NTDReport.objects.create(reporter=reporter)
         report.message=submission.message.text
         report.raw = json.dumps(values)
-        report.disease="Filiariasis"
+        report.disease="Helminthiasis"
         report.number_of_communities_fil = int(values['No of communities and schools'])
         report.treated_lt_6_male_fil = int(values['Treated Less Than 6 Months male'])
         report.treated_lt_6_female_fil = int(values['Treated Less Than 6 Months female'])
@@ -301,7 +301,7 @@ def handle_treated_hel(xform, submission, health_provider):
         report.message=submission.message.text
         report=NTDReport.objects.create(reporter=reporter)
         report.raw = json.dumps(values)
-        report.disease="Filiariasis"
+        report.disease="Helminthiasis"
         report.number_of_communities_hel = int(values['No of communities and schools'])
         report.treated_lt_6_male_hel = int(values['Treated Less Than 6 Months male'])
         report.treated_lt_6_female_hel = int(values['Treated Less Than 6 Months female'])
@@ -555,7 +555,6 @@ def handle_submission(sender, **kwargs):
     submission = kwargs['submission']
     role=Group.objects.get(name="Ntds")
     # manually check restrict to
-    #import ipdb;ipdb.set_trace()
 
 
     if submission.has_errors:
